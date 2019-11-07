@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Parking.API.Controller
 {
-    [Route("api/car/")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class CarController : ControllerBase
     {

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Parking.API.Context
 {
-    public static class Extensions
+    public static class ORMExtensions
     {
         public static IWebHost MigrateDatabase<T>(this IWebHost webHost) where T : DbContext
         {

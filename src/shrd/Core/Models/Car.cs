@@ -9,6 +9,8 @@ namespace Core.Models
         public Model Model { get; set; }
 
         public Type Type { get; set; }
+
+        public int Year { get; set; }
     }
 
 }

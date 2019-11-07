@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Parking.API.Controller
 {
-    [Route("api/slot/")]
+    [Route("api/[controller]/")]
     [ApiController]
     public class SlotController : ControllerBase
     {

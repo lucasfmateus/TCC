@@ -1,22 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using Classification.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Parking.API.Context;
-using Parking.API.Services;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Parking.API
+namespace Classification
 {
-    public class ParkingApiService
+    public class ClassificationApiService
     {
         public IConfiguration Configuration { get; }
-        public ParkingApiService(IConfiguration configuration)
+        public ClassificationApiService(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -30,28 +29,26 @@ namespace Parking.API
             }));
 
             services.AddMvc();
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<ParkingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Parking API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "Classification API", Version = "v1" });
             });
 
-            services.AddSingleton<CarService>();
-            services.AddSingleton<ParkedService>();
+            services.AddSingleton<ClassificationService>();
 
         }
+
         public void Configure(IApplicationBuilder app)
         {
-
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Parking API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Classification API");
             });
             app.UseAuthentication();
 
