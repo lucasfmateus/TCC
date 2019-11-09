@@ -1,0 +1,119 @@
+﻿@page "/cadastrados"
+@inject ParkedController parkingService
+@inject SlotController slotService
+    
+<div class="row">
+
+    <div class="card">
+
+        <h1>Carros Alocados</h1>
+
+            @if (CarsParked == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table">
+
+                    <thead>
+
+                        <tr  class="table">
+                            <th>Id</th>
+                            <th>Modelo</th>
+                            <th>Fabricante</th>
+                            <th>Categoria</th>
+                            <th>Slot</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var x in CarsParked)
+                        {
+                            <tr>
+                                <td>@x.Id</td>
+                                <td>@x.Car.Model.Name</td>
+                                <td>@x.Car.Model.Manufacturer.Name</td>
+                                <td>@x.Car.Type.Name</td>
+                                <td>@x.Slot.Name</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+        </div>
+
+    <div class="card">
+
+        <h1> Vagas Disponiveis </h1>
+
+        @if (FreeSlots == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>Id</th>
+                        <th>Nome</th>
+                        <th>Distâcia da Porta</th>
+                        <th>Categorias</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in FreeSlots)
+                    {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.DistDoor</td>
+
+                        @if ( item.Types == null )
+                        {
+                            <td>Carregando...</td>
+                        }
+                        else
+                        {
+                            @foreach ( var p in item.Types )
+                            {
+                                <td>@p.Type.Name</td>
+                            }
+                        }
+
+                    </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        }
+
+    </div>
+
+</div>
+
+
+
+@code {
+
+    List<ParkedCar> CarsParked;
+    ParkedCar CarsParkedById;
+    List<Slot> FreeSlots;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CarsParked = await parkingService.GetParkedCarsAsync();
+        FreeSlots = await slotService.GetFreeSlotsAsync();
+    }
+}
