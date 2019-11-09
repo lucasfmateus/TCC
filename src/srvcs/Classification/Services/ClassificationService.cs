@@ -25,7 +25,7 @@ namespace Classification.Services
         /// <summary>
         /// Gera as labels a partir do banco de dados e envia para o treinamento
         /// </summary>
-        public async void TrainAsync(bool retrain = false)
+        public async Task<object> TrainAsync(bool retrain = false)
         {
             var lablelsDict = new Dictionary<string, string>();
 
@@ -46,6 +46,8 @@ namespace Classification.Services
                 .WithHeader("retrain", retrain);
 
             await request.PostJsonAsync(lablelsDict);
+
+            return lablelsDict;
         }
 
         public async Task<Car> ClassificateAsync(string imageDirectory)
