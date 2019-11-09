@@ -13,9 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parking", "Parking\Parking.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parking.API.Host", "Parking.API.Host\Parking.API.Host.csproj", "{9EF6AEDF-BE8D-4D39-873F-715F521DC53F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classification", "Classification\Classification.csproj", "{5957749D-103B-4CF6-AF4D-BCA9DEC4DD90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Classification", "Classification\Classification.csproj", "{5957749D-103B-4CF6-AF4D-BCA9DEC4DD90}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classification.API.Host", "Classification.API.Host\Classification.API.Host.csproj", "{B0D43112-6700-4290-991B-712CB3A6E622}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Classification.API.Host", "Classification.API.Host\Classification.API.Host.csproj", "{B0D43112-6700-4290-991B-712CB3A6E622}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UI", "..\clnts\UI.csproj", "{64DAD1AF-69DC-4584-855A-985FDC1C6D6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{B0D43112-6700-4290-991B-712CB3A6E622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0D43112-6700-4290-991B-712CB3A6E622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0D43112-6700-4290-991B-712CB3A6E622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64DAD1AF-69DC-4584-855A-985FDC1C6D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DAD1AF-69DC-4584-855A-985FDC1C6D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DAD1AF-69DC-4584-855A-985FDC1C6D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DAD1AF-69DC-4584-855A-985FDC1C6D6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

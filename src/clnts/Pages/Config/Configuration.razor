@@ -1,0 +1,140 @@
+﻿@page "/configuration"
+@inject SlotController slotService
+@inject CarController carService
+
+<div class="row">
+
+    <div class="card">
+
+        <h1>Nova Vaga</h1>
+
+        <EditForm Model="@NewSlot" OnValidSubmit="@AddNewSlot">
+
+            <p>
+                <label for="Id">Id</label>
+                <input type="text" bind="@NewSlot.Id" />
+            </p>
+
+            <p>
+                <label for="Name">Nome</label>
+                <input type="text" bind="@NewSlot.Name" />
+            </p>
+
+
+            <p>
+                <label for="DistDoor">Distância da Porta</label>
+                <input type="text" bind="@NewSlot.DistDoor" />
+            </p>
+
+            <p>
+                <label for="Pais">Categorias Suportadas</label>
+                <input type="text" bind="@NewSlot.Types" />
+            </p>
+
+            <button type="submit">Submit</button>
+
+        </EditForm>
+
+        <h1>Nova Categoria</h1>
+
+        <EditForm Model="@NewCategory" OnValidSubmit="@AddNewCategory">
+
+            <p>
+                <label for="Id">Id</label>
+                <input type="text" @bind="NewCategory.Id" />
+            </p>
+
+            <p>
+                <label for="Name">Nome</label>
+                <input type="text" @bind="NewCategory.Name" />
+            </p>
+
+            <button type="submit">Submit</button>
+
+        </EditForm>
+
+    </div>
+
+    <div class="card">
+        <h1>Cadatro de Carros</h1>
+        
+        @if (manufacturers == null)
+        {
+            <p><em>Loading...</em></p>}
+        else
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Fabricante</label>
+                </div>
+            </div>
+
+            <div class="row" style="padding-top:10px">
+                
+                <div class="col-md-4">
+                   
+                    <select class="form-control">
+                        
+                        <option value="">-- Fabricante --</option>
+                        @foreach (var m in manufacturers)
+                        {
+                            <option value="@m.Id">@m.Name</option>
+                        }
+                    </select>
+
+                    <select class="form-control">
+                        <option value="">-- Modelo --</option>
+                        @foreach (var m in models)
+                        {
+                            <option value="@m.Id">@m.Name</option>
+                        }
+                    </select>
+
+                    <p>
+                        <label for="Year">Ano</label>
+                        <input type="text" @bind="NewCar.Year" />
+                    </p>                    
+                
+                </div>
+            </div>
+        }
+        </div>
+
+</div>
+
+
+@code{
+
+    Slot NewSlot = new Slot();
+    Core.Models.Type NewCategory = new Core.Models.Type();
+    Car NewCar = new Car();
+    List<Manufacturer> manufacturers = new List<Manufacturer>();
+    List<Model> models = new List<Model>();
+
+
+    bool collapseNavMenu = true; 
+    void ToggleNavMenu() { collapseNavMenu = !collapseNavMenu; }
+
+    protected async Task AddNewSlot()
+    {
+        if (NewSlot.Name != null && NewSlot.Types ! == null)
+        {
+            await slotService.NewSlotAsync(NewSlot);
+        }
+    }
+
+    protected async Task AddNewCategory()
+    {
+        if (NewCategory.Name != null)
+        {
+            var  x = await carService.NewCategoryAsync(NewCategory);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        manufacturers = await carService.GetAllManufacturesAsync();
+        models = await carService.GetAllModelsAsync();
+    }
+
+}
