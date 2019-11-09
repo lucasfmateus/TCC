@@ -24,11 +24,18 @@ namespace Classification.Controllers
             this.classificationService = new ClassificationService(db);
         }
 
+        [Route("Train/")]
+        [HttpGet]
+        public async void Train()
+        {
+            classificationService.TrainAsync();
+        }
+
         [Route("Classificate/")]
         [HttpGet]
-        public async Task<Car> GetAllCar([FromQuery] string folder)
+        public async Task<Car> GetAllCars([FromQuery] string folder)
         {
-            return await classificationService.ClassificationResultAsync(folder);
-        }
+            return await classificationService.ClassificateAsync(folder);
+        }        
     }
 }

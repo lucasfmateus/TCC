@@ -10,7 +10,6 @@ namespace Core.Models
 
         public Type Type { get; set; }
 
-        public int Year { get; set; }
+        public string ImagesDirectory { get; set; }
     }
-
 }
