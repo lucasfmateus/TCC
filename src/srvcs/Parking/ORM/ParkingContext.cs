@@ -10,6 +10,8 @@ namespace Parking.API.Context
 {
     public class ParkingContext : DbContext
     {
+        const string schema = "Parking";
+
         public DbSet<Car> Cars { get; set; }
 
         public DbSet<Model> Models { get; set; }
@@ -27,7 +29,7 @@ namespace Parking.API.Context
         public ParkingContext(DbContextOptions<ParkingContext> options) : base(options)
         {
         }
-
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ParkingDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
@@ -38,12 +40,13 @@ namespace Parking.API.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<SlotType>().HasKey(x => new { x.SlotId, x.TypeId });
+            modelBuilder.HasDefaultSchema(schema);
 
         }
 
         internal static void ConfigureDBContext(SqlServerDbContextOptionsBuilder obj)
         {
-            obj.MigrationsHistoryTable("__Migrations", "App");
+            obj.MigrationsHistoryTable("__Migrations", schema);
         }
     }
     public class ParkingContextDesignTimeFactory : IDesignTimeDbContextFactory<ParkingContext>
