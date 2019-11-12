@@ -61,7 +61,7 @@ namespace Parking.API.Services
 
             if (m == null)
             {
-                db.Categories.Add(type);
+                db.Types.Add(type);
                 await db.SaveChangesAsync();
 
                 return true;

@@ -132,7 +132,7 @@ namespace Parking.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("SlotCategories");
+                    b.ToTable("SlotTypes");
                 });
 
             modelBuilder.Entity("Core.Models.Type", b =>
@@ -146,7 +146,7 @@ namespace Parking.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Types");
                 });
 
             modelBuilder.Entity("Core.Models.Car", b =>

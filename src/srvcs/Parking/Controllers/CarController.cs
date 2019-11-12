@@ -64,11 +64,53 @@ namespace Parking.API.Controller
             return p;
         }
 
+        [Route("GetModelByName")]
+        [HttpGet]
+        public Model GetModelsByName([FromQuery]string name)
+        {
+            var p = db.Models.Include(x => x.Manufacturer)
+                             .Where(x => x.Name == name)
+                             .FirstOrDefault();
+            return p;
+        }
+
         [Route("GetManufactures/")]
         [HttpGet]
         public List<Manufacturer> GetAllManufactures()
         {
             var p = db.Manufacturers.ToList();
+            return p;
+        }
+
+        [Route("GetTypes/")]
+        [HttpGet]
+        public List<Core.Models.Type> GetAllTypes()
+        {
+            var p = db.Types.ToList();
+            return p;
+        }
+
+        [Route("GetManufacturesByName")]
+        [HttpGet]
+        public Manufacturer GetManufacturesByName([FromQuery] string name)
+        {
+            var p = db.Manufacturers.Where(x => x.Name == name).FirstOrDefault();
+            return p;
+        }
+
+        [Route("GetTypeByName")]
+        [HttpGet]
+        public Core.Models.Type GetTypeByName([FromQuery] string name)
+        {
+            var p = db.Types.Where(x => x.Name == name).FirstOrDefault();
+            return p;
+        }
+
+        [Route("GetModelByNameAsync")]
+        [HttpGet]
+        public Model GetModelById([FromQuery] string name)
+        {
+            var p = db.Models.Where(x => x.Name == name).FirstOrDefault();
             return p;
         }
 

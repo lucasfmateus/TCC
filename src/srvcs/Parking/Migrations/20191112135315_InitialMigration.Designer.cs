@@ -10,7 +10,7 @@ using Parking.API.Context;
 namespace Parking.Migrations
 {
     [DbContext(typeof(ParkingContext))]
-    [Migration("20191110024416_InitialMigration")]
+    [Migration("20191112135315_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,7 +134,7 @@ namespace Parking.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("SlotCategories");
+                    b.ToTable("SlotTypes");
                 });
 
             modelBuilder.Entity("Core.Models.Type", b =>
@@ -148,7 +148,7 @@ namespace Parking.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Types");
                 });
 
             modelBuilder.Entity("Core.Models.Car", b =>

@@ -27,29 +27,29 @@
             </p>
 
             <p>
-                <label for="Pais">Categorias Suportadas</label>
+                <label for="Pais">Tipo</label>
                 <input type="text" bind="@NewSlot.Types" />
             </p>
 
-            <button type="submit">Submit</button>
+            <button type="submit">Cadastrar</button>
 
         </EditForm>
 
-        <h1>Nova Categoria</h1>
+        <h1>Novo Tipo</h1>
 
-        <EditForm Model="@NewCategory" OnValidSubmit="@AddNewCategory">
+        <EditForm Model="@NewType" OnValidSubmit="@AddNewType">
 
             <p>
                 <label for="Id">Id</label>
-                <input type="text" @bind="NewCategory.Id" />
+                <input type="text" @bind="NewType.Id" />
             </p>
 
             <p>
                 <label for="Name">Nome</label>
-                <input type="text" @bind="NewCategory.Name" />
+                <input type="text" @bind="NewType.Name" />
             </p>
 
-            <button type="submit">Submit</button>
+            <button type="submit">Cadastrar</button>
 
         </EditForm>
 
@@ -57,48 +57,108 @@
 
     <div class="card">
         <h1>Cadatro de Carros</h1>
-        
-        @if (manufacturers == null)
+
+        @if (Loading == false)
         {
             <p><em>Loading...</em></p>}
         else
         {
-            <div class="row">
-                <div class="col-md-4">
-                    <label class="control-label">Fabricante</label>
-                </div>
-            </div>
 
             <div class="row" style="padding-top:10px">
-                
-                <div class="col-md-4">
-                   
-                    <select class="form-control">
-                        
-                        <option value="">-- Fabricante --</option>
-                        @foreach (var m in manufacturers)
-                        {
-                            <option value="@m.Id">@m.Name</option>
-                        }
-                    </select>
 
-                    <select class="form-control">
+                <div class="col-md-4">
+
+                    <select class="form-control" @onchange="ModelClicked">
+
                         <option value="">-- Modelo --</option>
+
                         @foreach (var m in models)
                         {
                             <option value="@m.Id">@m.Name</option>
                         }
+
                     </select>
 
-                    <p>
-                        <label for="Year">Ano</label>
-                        <input type="text" @bind="NewCar.Year" />
-                    </p>                    
-                
+                    <select class="form-control" @onchange="TypeClicked">
+
+                        <option value="">-- Tipos --</option>
+
+                        @foreach (var m in types)
+                        {
+                            <option value="@m.Id">@m.Name</option>
+                        }
+
+                    </select>
+
+                    <button type="submit" @onclick="RegisterNewCar">Cadastrar</button>
                 </div>
             </div>
         }
-        </div>
+
+        <h1>Cadatro de Modelo</h1>
+
+        @if (Loading == false)
+        {
+            <p><em>Loading...</em></p>}
+        else
+        {
+            @*<div class="row">
+                    <div class="col-md-4">
+                        <label class="control-label">Modelo</label>
+                    </div>
+                </div>*@
+
+            <div class="row" style="padding-top:10px">
+
+                <div class="col-md-4">
+
+                    <select class="form-control" @onchange="ManufacturerClicked">
+
+                        <option value="">-- Fabricante --</option>
+
+                        @foreach (var m in manufacturies)
+                        {
+                            <option value="@m.Name">@m.Name</option>
+                        }
+
+                    </select>
+
+                    @*<p>
+                            <label for="Year">Ano</label>
+                            <input type="text" @bind="NewModel.Year" />
+                        </p>*@
+
+                    <p>
+                        <label for="Name">Nome</label>
+                        <input type="text" @bind="NewModel.Name" />
+                    </p>
+
+                    <button type="submit" @onclick="RegisterNewModel">Cadastrar</button>
+                </div>
+            </div>
+        }
+
+        <h1>Cadatro de Fabricante</h1>
+
+        @if (Loading == false)
+        {
+            <p><em>Loading...</em></p>}
+        else
+        {
+            <div class="row" style="padding-top:10px">
+
+                <div class="col-md-4">
+
+                    <p>
+                        <label for="Name">Nome</label>
+                        <input type="text" @bind="NewManufacturer.Name" />
+                    </p>
+
+                    <button type="submit" @onclick="RegisterNewManufacturer">Cadastrar</button>
+                </div>
+            </div>
+        }
+    </div>
 
 </div>
 
@@ -106,35 +166,94 @@
 @code{
 
     Slot NewSlot = new Slot();
-    Core.Models.Type NewCategory = new Core.Models.Type();
+    Core.Models.Type NewType = new Core.Models.Type();
     Car NewCar = new Car();
-    List<Manufacturer> manufacturers = new List<Manufacturer>();
+    Model NewModel = new Model();
+    Manufacturer NewManufacturer = new Manufacturer();
+    List<Manufacturer> manufacturies = new List<Manufacturer>();
     List<Model> models = new List<Model>();
+    List<Core.Models.Type> types = new List<Core.Models.Type>();
+    bool Loading = false;
+    string modelName { get; set; }
+    string typeName { get; set; }
+    string manufacturerName { get; set; }
 
-
-    bool collapseNavMenu = true; 
+    bool collapseNavMenu = true;
     void ToggleNavMenu() { collapseNavMenu = !collapseNavMenu; }
 
     protected async Task AddNewSlot()
     {
-        if (NewSlot.Name != null && NewSlot.Types ! == null)
+        if (NewSlot.Name != null && NewSlot.Types! == null)
         {
             await slotService.NewSlotAsync(NewSlot);
         }
     }
 
-    protected async Task AddNewCategory()
+    protected async Task AddNewType()
     {
-        if (NewCategory.Name != null)
+        if (NewType.Name != null)
         {
-            var  x = await carService.NewCategoryAsync(NewCategory);
+            var x = await carService.NewTypeAsync(NewType);
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        manufacturers = await carService.GetAllManufacturesAsync();
+        manufacturies = await carService.GetAllManufacturesAsync();
         models = await carService.GetAllModelsAsync();
+        types = await carService.GetAllTypesAsync();
+
+        if (manufacturies != null && models != null && types != null)
+        {
+            Loading = true;
+        }
+    }
+
+    void ModelClicked(ChangeEventArgs modelEvent)
+    {
+        modelName = modelEvent.Value.ToString();
+        this.StateHasChanged();
+    }
+
+    void TypeClicked(ChangeEventArgs typeEvent)
+    {
+        typeName = typeEvent.Value.ToString();
+        this.StateHasChanged();
+    }
+
+    void ManufacturerClicked(ChangeEventArgs manufacturerEvent)
+    {
+        manufacturerName = manufacturerEvent.Value.ToString();
+        this.StateHasChanged();
+    }
+
+    public async void RegisterNewCar()
+    {
+        NewCar.Model = await carService.GetModelByNameAsync(modelName);
+        NewCar.Type = await carService.GetTypeByNameAsync(typeName);
+
+        if (NewCar.Model != null && NewCar.Type != null)
+        {
+            var x = await carService.NewCarAsync(NewCar);
+        }
+    }
+
+    public async void RegisterNewModel()
+    {
+        if (NewModel.Name != null)
+        {
+            NewModel.Manufacturer = await carService.GetManufacturesByNameAsync(manufacturerName);
+            var x = await carService.NewModelAsync(NewModel);
+            NewModel = new Model();
+        }
+    }
+
+    public async void RegisterNewManufacturer()
+    {
+        if (NewManufacturer.Name != null)
+        {
+            var x = await carService.NewManufactureAsync(NewManufacturer);
+        }
     }
 
 }

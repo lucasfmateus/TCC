@@ -15,7 +15,7 @@ namespace UI.Service.Controller
         {
             try
             {
-                var request = await client.GetAsync("car/GetAdress");
+                var request = await client.GetAsync("Car/GetAdress");
 
                 return await request.Content.ReadAsAsync<List<string>>();
 
@@ -30,7 +30,7 @@ namespace UI.Service.Controller
         {
             try
             {
-                var request = await client.GetAsync("car/GetCars");
+                var request = await client.GetAsync("Car/GetCars");
 
                 return await request.Content.ReadAsAsync<List<Car>>();
 
@@ -45,7 +45,7 @@ namespace UI.Service.Controller
         {
             try
             {
-                var request = await client.GetAsync("car/GetModels");
+                var request = await client.GetAsync("Car/GetModels");
 
                 return await request.Content.ReadAsAsync<List<Model>>();
 
@@ -60,9 +60,69 @@ namespace UI.Service.Controller
         {
             try
             {
-                var request = await client.GetAsync("car/GetManufactures");
+                var request = await client.GetAsync("Car/GetManufactures/");
 
                 return await request.Content.ReadAsAsync<List<Manufacturer>>();
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<Core.Models.Type>> GetAllTypesAsync()
+        {
+            try
+            {
+                var request = await client.GetAsync("Car/GetTypes");
+
+                return await request.Content.ReadAsAsync<List<Core.Models.Type>>();
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<Manufacturer> GetManufacturesByNameAsync(string name)
+        {
+            try
+            {
+                var request = await client.GetAsync("Car/GetManufacturesByName?name="+name);
+
+
+                return await request.Content.ReadAsAsync<Manufacturer>();
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<Model> GetModelByNameAsync(string name)
+        {
+            try
+            {
+                var request = await client.GetAsync("Car/GetModelByName?name=" + name);
+                
+                return await request.Content.ReadAsAsync<Model>();
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public async Task<Core.Models.Type> GetTypeByNameAsync(string name)
+        {
+            try
+            {
+                var request = await client.GetAsync("Car/GetTypeByName?name=" + name);
+
+                return await request.Content.ReadAsAsync<Core.Models.Type>();
 
             }
             catch (Exception)
@@ -81,12 +141,12 @@ namespace UI.Service.Controller
             {
                 try
                 {
-                    var request = await client.PostAsync("parked/NewManufacture/", stringContent);
+                    var request = await client.PostAsync("Car/NewManufacture/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
                     return await request.Content.ReadAsAsync<Manufacturer>();
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return null;
                 }
@@ -104,7 +164,7 @@ namespace UI.Service.Controller
             {
                 try
                 {
-                    var request = await client.PostAsync("parked/NewModel/", stringContent);
+                    var request = await client.PostAsync("Car/NewModel/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
                     return await request.Content.ReadAsAsync<Model>();
 
@@ -116,7 +176,7 @@ namespace UI.Service.Controller
             }
 
         }
-        
+
         public async Task<Car> NewCarAsync(Car car)
         {
             var myContent = JsonConvert.SerializeObject(car);
@@ -127,7 +187,7 @@ namespace UI.Service.Controller
             {
                 try
                 {
-                    var request = await client.PostAsync("parked/NewCar/", stringContent);
+                    var request = await client.PostAsync("Car/NewCar/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
                     return await request.Content.ReadAsAsync<Car>();
 
@@ -139,10 +199,10 @@ namespace UI.Service.Controller
             }
 
         }
-        
-        public async Task<Core.Models.Type> NewCategoryAsync(Core.Models.Type category)
+
+        public async Task<Core.Models.Type> NewTypeAsync(Core.Models.Type type)
         {
-            var myContent = JsonConvert.SerializeObject(category);
+            var myContent = JsonConvert.SerializeObject(type);
 
             using (var stringContent = new StringContent(myContent, System.Text.Encoding.UTF8, "application/json"))
 
@@ -150,9 +210,9 @@ namespace UI.Service.Controller
             {
                 try
                 {
-                    var request = await client.PostAsync("car/NewCarCategory/", stringContent);
+                    var request = await client.PostAsync("Car/NewCarType/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
-                    return await request.Content.ReadAsAsync<Core.Models.Type> ();
+                    return await request.Content.ReadAsAsync<Core.Models.Type>();
 
                 }
                 catch (Exception)

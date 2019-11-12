@@ -22,9 +22,9 @@ namespace Parking.API.Context
 
         public DbSet<Slot> Slots { get; set; }
 
-        public DbSet<SlotType> SlotCategories { get; set; }
+        public DbSet<SlotType> SlotTypes { get; set; }
 
-        public DbSet<Core.Models.Type> Categories { get; set; }
+        public DbSet<Core.Models.Type> Types { get; set; }
 
         public ParkingContext(DbContextOptions<ParkingContext> options) : base(options)
         {

@@ -11,20 +11,6 @@ namespace Parking.Migrations
                 name: "Parking");
 
             migrationBuilder.CreateTable(
-                name: "Categories",
-                schema: "Parking",
-                columns: table => new
-                {
-                    Id = table.Column<string>(nullable: false),
-                    CreateAt = table.Column<DateTimeOffset>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Manufacturers",
                 schema: "Parking",
                 columns: table => new
@@ -55,6 +41,20 @@ namespace Parking.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Types",
+                schema: "Parking",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    CreateAt = table.Column<DateTimeOffset>(nullable: false),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Types", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Models",
                 schema: "Parking",
                 columns: table => new
@@ -77,7 +77,7 @@ namespace Parking.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SlotCategories",
+                name: "SlotTypes",
                 schema: "Parking",
                 columns: table => new
                 {
@@ -86,19 +86,19 @@ namespace Parking.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SlotCategories", x => new { x.SlotId, x.TypeId });
+                    table.PrimaryKey("PK_SlotTypes", x => new { x.SlotId, x.TypeId });
                     table.ForeignKey(
-                        name: "FK_SlotCategories_Slots_SlotId",
+                        name: "FK_SlotTypes_Slots_SlotId",
                         column: x => x.SlotId,
                         principalSchema: "Parking",
                         principalTable: "Slots",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SlotCategories_Categories_TypeId",
+                        name: "FK_SlotTypes_Types_TypeId",
                         column: x => x.TypeId,
                         principalSchema: "Parking",
-                        principalTable: "Categories",
+                        principalTable: "Types",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -126,10 +126,10 @@ namespace Parking.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Cars_Categories_TypeId",
+                        name: "FK_Cars_Types_TypeId",
                         column: x => x.TypeId,
                         principalSchema: "Parking",
-                        principalTable: "Categories",
+                        principalTable: "Types",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -194,9 +194,9 @@ namespace Parking.Migrations
                 column: "SlotId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SlotCategories_TypeId",
+                name: "IX_SlotTypes_TypeId",
                 schema: "Parking",
-                table: "SlotCategories",
+                table: "SlotTypes",
                 column: "TypeId");
         }
 
@@ -207,7 +207,7 @@ namespace Parking.Migrations
                 schema: "Parking");
 
             migrationBuilder.DropTable(
-                name: "SlotCategories",
+                name: "SlotTypes",
                 schema: "Parking");
 
             migrationBuilder.DropTable(
@@ -223,7 +223,7 @@ namespace Parking.Migrations
                 schema: "Parking");
 
             migrationBuilder.DropTable(
-                name: "Categories",
+                name: "Types",
                 schema: "Parking");
 
             migrationBuilder.DropTable(
