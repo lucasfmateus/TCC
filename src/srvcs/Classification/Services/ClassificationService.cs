@@ -22,6 +22,11 @@ namespace Classification.Services
             this.db = db;
         }
 
+        public async void InitializeDb()
+        {
+
+        }
+
         /// <summary>
         /// Gera as labels a partir do banco de dados e envia para o treinamento
         /// </summary>
@@ -50,6 +55,11 @@ namespace Classification.Services
             return lablelsDict;
         }
 
+        /// <summary>
+        /// Classifica uma imagem em um dos carros conhecidos
+        /// </summary>
+        /// <param name="imageDirectory">Diretório da imagem</param>
+        /// <returns></returns>
         public async Task<Car> ClassificateAsync(string imageDirectory)
         {
             try
