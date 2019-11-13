@@ -1,0 +1,120 @@
+﻿@inject CarController carService
+@inject SlotController slotService
+@page "/cadastrados"
+
+<div class="row">
+
+    <div class="card">
+
+        <h1>  Carros Cadastrados </h1>
+
+        @if (RegisteredCars == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>Id</th>
+                        <th>Tipo</th>
+                        <th>Modelo</th>
+                        <th>Ano</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in RegisteredCars)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Type.Name</td>
+                            <td>@item.Model.Name</td>
+                            <td>@item.Model.Year</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        }
+
+    </div>
+
+
+    <div class="card">
+
+        <h1> Vagas Cadastradas </h1>
+
+        @if (Slots == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table">
+
+                <thead>
+
+                    <tr>
+                        <th>Id</th>
+                        <th>Nome</th>
+                        <th>Distâcia da Porta</th>
+                        <th>Categorias</th>
+                        <th>Ocupada</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Slots)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.DistDoor</td>
+
+                            @if (item.Types == null)
+                            {
+                                <td>Carregando...</td>
+                            }
+                            else
+                            {
+                                @foreach (var p in item.Types)
+                                {
+                                    <td>@p.Type.Name</td>
+                                }
+                            }
+
+                            <td>@item.IsBusy</td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        }
+
+    </div>
+
+</div>
+
+@code {
+
+    List<Car> RegisteredCars;
+    List<Slot> Slots;
+
+    protected override async Task OnInitializedAsync()
+    {
+        RegisteredCars = await carService.GetAllCarsAsync();
+        Slots = await slotService.GetAllSlotsAsync();
+
+    }
+}

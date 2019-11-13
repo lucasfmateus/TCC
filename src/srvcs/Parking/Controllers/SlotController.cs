@@ -52,14 +52,14 @@ namespace Parking.API.Controller
 
         [Route("NewSlot/")]
         [HttpPost]
-        public async Task<ActionResult<Slot>> AsyncAddSlot([FromBody] Slot slot)
+        public async Task<bool> AsyncAddSlot([FromBody] Slot slot)
         {
 
             var c = db.Set<Core.Models.Type>().Where(x => slot.Types.Select( y => y.TypeId).Contains(x.Id)).FirstOrDefault();
 
             if (c == null)
             {
-                return CreatedAtAction("Falha ao adicionar item:", new { id = slot.Id }, slot);
+                return false;
             }
 
             slot.IsBusy = false;
@@ -68,7 +68,7 @@ namespace Parking.API.Controller
 
             await db.SaveChangesAsync();
             
-            return CreatedAtAction("Item Adicionado:", new { id = slot.Id }, slot);
+            return true;
         }
 
     }

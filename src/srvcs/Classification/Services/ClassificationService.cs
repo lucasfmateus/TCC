@@ -22,12 +22,12 @@ namespace Classification.Services
             {
                 Id = "77",
                 CreateAt = DateTimeOffset.Now,
-                Year = 2019,
                 Model = new Model
                 {
                     Name = "Fusquinha",
                     Id = "77",
                     CreateAt = DateTimeOffset.Now,
+                    Year = 2019,
                     Manufacturer = new Manufacturer
                     {
                         CreateAt = DateTime.Now,

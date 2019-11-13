@@ -3,163 +3,167 @@
 @inject CarController carService
 
 <div class="row">
+    @if (Loading == false)
+    {
+        <p><em>Loading...</em></p>}
+    else
+    {
+        <div class="card">
 
-    <div class="card">
+            <h1>Nova Vaga</h1>
 
-        <h1>Nova Vaga</h1>
+            <EditForm Model="@NewSlot" OnValidSubmit="@AddNewSlot">
 
-        <EditForm Model="@NewSlot" OnValidSubmit="@AddNewSlot">
+                @*<p>
+                    <label for="Id">Id</label>
+                    <input type="text" bind="@NewSlot.Id" />
+                </p>*@
 
-            <p>
-                <label for="Id">Id</label>
-                <input type="text" bind="@NewSlot.Id" />
-            </p>
-
-            <p>
-                <label for="Name">Nome</label>
-                <input type="text" bind="@NewSlot.Name" />
-            </p>
+                <p>
+                    <label for="Name">Nome</label>
+                    <input type="text" bind="@NewSlot.Name" />
+                </p>
 
 
-            <p>
-                <label for="DistDoor">Distância da Porta</label>
-                <input type="text" bind="@NewSlot.DistDoor" />
-            </p>
+                <p>
+                    <label for="DistDoor">Distância da Porta</label>
+                    <input type="text" bind="@NewSlot.DistDoor" />
+                </p>
 
-            <p>
-                <label for="Pais">Tipo</label>
-                <input type="text" bind="@NewSlot.Types" />
-            </p>
+                <p>
+                    <label for="Type">Tipo</label>
+                    <input type="text" bind="@NewSlot.Types" />
+                </p>
 
-            <button type="submit">Cadastrar</button>
+                <button type="submit">Cadastrar</button>
 
-        </EditForm>
+            </EditForm>
 
-        <h1>Novo Tipo</h1>
+            <h1>Novo Tipo</h1>
 
-        <EditForm Model="@NewType" OnValidSubmit="@AddNewType">
+            <EditForm Model="@NewType" OnValidSubmit="@AddNewType">
 
-            <p>
-                <label for="Id">Id</label>
-                <input type="text" @bind="NewType.Id" />
-            </p>
+                @*<p>
+                    <label for="Id">Id</label>
+                    <input type="text" @bind="NewType.Id" />
+                </p>*@
 
-            <p>
-                <label for="Name">Nome</label>
-                <input type="text" @bind="NewType.Name" />
-            </p>
+                <p>
+                    <label for="Name">Nome</label>
+                    <input type="text" @bind="NewType.Name" />
+                </p>
 
-            <button type="submit">Cadastrar</button>
+                <button type="submit">Cadastrar</button>
 
-        </EditForm>
+            </EditForm>
 
-    </div>
+        </div>
 
-    <div class="card">
-        <h1>Cadatro de Carros</h1>
+        <div class="card">
+            <h1>Cadatro de Carros</h1>
 
-        @if (Loading == false)
-        {
-            <p><em>Loading...</em></p>}
-        else
-        {
+            @if (Loading == false)
+            {
+                <p><em>Loading...</em></p>}
+            else
+            {
 
-            <div class="row" style="padding-top:10px">
+                <div class="row" style="padding-top:10px">
 
-                <div class="col-md-4">
+                    <div class="col-md-4">
 
-                    <select class="form-control" @onchange="ModelClicked">
+                        <select class="form-control" @onchange="ModelClicked">
 
-                        <option value="">-- Modelo --</option>
+                            <option value="">-- Modelo --</option>
 
-                        @foreach (var m in models)
-                        {
-                            <option value="@m.Id">@m.Name</option>
-                        }
+                            @foreach (var m in models)
+                            {
+                                <option value="@m.Name">@m.Name</option>
+                            }
 
-                    </select>
+                        </select>
 
-                    <select class="form-control" @onchange="TypeClicked">
+                        <select class="form-control" @onchange="TypeClicked">
 
-                        <option value="">-- Tipos --</option>
+                            <option value="">-- Tipos --</option>
 
-                        @foreach (var m in types)
-                        {
-                            <option value="@m.Id">@m.Name</option>
-                        }
+                            @foreach (var m in types)
+                            {
+                                <option value="@m.Name">@m.Name</option>
+                            }
 
-                    </select>
+                        </select>
 
-                    <button type="submit" @onclick="RegisterNewCar">Cadastrar</button>
+                        <button type="submit" @onclick="RegisterNewCar">Cadastrar</button>
+                    </div>
                 </div>
-            </div>
-        }
+            }
 
-        <h1>Cadatro de Modelo</h1>
+            <h1>Cadatro de Modelo</h1>
 
-        @if (Loading == false)
-        {
-            <p><em>Loading...</em></p>}
-        else
-        {
-            @*<div class="row">
+            @if (Loading == false)
+            {
+                <p><em>Loading...</em></p>}
+            else
+            {
+                @*<div class="row">
                     <div class="col-md-4">
                         <label class="control-label">Modelo</label>
                     </div>
                 </div>*@
 
-            <div class="row" style="padding-top:10px">
+                <div class="row" style="padding-top:10px">
 
-                <div class="col-md-4">
+                    <div class="col-md-4">
 
-                    <select class="form-control" @onchange="ManufacturerClicked">
+                        <select class="form-control" @onchange="ManufacturerClicked">
 
-                        <option value="">-- Fabricante --</option>
+                            <option value="">-- Fabricante --</option>
 
-                        @foreach (var m in manufacturies)
-                        {
-                            <option value="@m.Name">@m.Name</option>
-                        }
+                            @foreach (var m in manufacturies)
+                            {
+                                <option value="@m.Name">@m.Name</option>
+                            }
 
-                    </select>
+                        </select>
 
-                    @*<p>
+                        <p>
                             <label for="Year">Ano</label>
                             <input type="text" @bind="NewModel.Year" />
-                        </p>*@
+                        </p>
 
-                    <p>
-                        <label for="Name">Nome</label>
-                        <input type="text" @bind="NewModel.Name" />
-                    </p>
+                        <p>
+                            <label for="Name">Nome</label>
+                            <input type="text" @bind="NewModel.Name" />
+                        </p>
 
-                    <button type="submit" @onclick="RegisterNewModel">Cadastrar</button>
+                        <button type="submit" @onclick="RegisterNewModel">Cadastrar</button>
+                    </div>
                 </div>
-            </div>
-        }
+            }
 
-        <h1>Cadatro de Fabricante</h1>
+            <h1>Cadatro de Fabricante</h1>
 
-        @if (Loading == false)
-        {
-            <p><em>Loading...</em></p>}
-        else
-        {
-            <div class="row" style="padding-top:10px">
+            @if (Loading == false)
+            {
+                <p><em>Loading...</em></p>}
+            else
+            {
+                <div class="row" style="padding-top:10px">
 
-                <div class="col-md-4">
+                    <div class="col-md-4">
 
-                    <p>
-                        <label for="Name">Nome</label>
-                        <input type="text" @bind="NewManufacturer.Name" />
-                    </p>
+                        <p>
+                            <label for="Name">Nome</label>
+                            <input type="text" @bind="NewManufacturer.Name" />
+                        </p>
 
-                    <button type="submit" @onclick="RegisterNewManufacturer">Cadastrar</button>
+                        <button type="submit" @onclick="RegisterNewManufacturer">Cadastrar</button>
+                    </div>
                 </div>
-            </div>
-        }
-    </div>
-
+            }
+        </div>
+    }
 </div>
 
 
@@ -194,6 +198,7 @@
         if (NewType.Name != null)
         {
             var x = await carService.NewTypeAsync(NewType);
+            carService.client.DefaultRequestHeaders.Accept.Clear();
         }
     }
 
@@ -227,7 +232,7 @@
         this.StateHasChanged();
     }
 
-    public async void RegisterNewCar()
+    public async Task RegisterNewCar()
     {
         NewCar.Model = await carService.GetModelByNameAsync(modelName);
         NewCar.Type = await carService.GetTypeByNameAsync(typeName);
@@ -236,9 +241,12 @@
         {
             var x = await carService.NewCarAsync(NewCar);
         }
+
+        await Load();
+
     }
 
-    public async void RegisterNewModel()
+    public async Task RegisterNewModel()
     {
         if (NewModel.Name != null)
         {
@@ -246,9 +254,35 @@
             var x = await carService.NewModelAsync(NewModel);
             NewModel = new Model();
         }
+
+        await Load();
     }
 
-    public async void RegisterNewManufacturer()
+    public async Task Load()
+    {
+        Loading = false;
+
+        try
+        {
+            manufacturies = await carService.GetAllManufacturesAsync();
+            models = await carService.GetAllModelsAsync();
+            types = await carService.GetAllTypesAsync();
+
+            if (manufacturies != null && models != null && types != null)
+            {
+                Loading = true;
+            }
+
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+
+    }
+
+    public async Task RegisterNewManufacturer()
     {
         if (NewManufacturer.Name != null)
         {

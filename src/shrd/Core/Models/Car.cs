@@ -16,10 +16,6 @@ namespace Core.Models
         [Required]
         public Type Type { get; set; }
 
-        [Required]
-        public int Year { get; set; }
-
-        [Required]
         public string Folder { get; set; }
     }
 

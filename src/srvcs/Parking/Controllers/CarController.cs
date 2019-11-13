@@ -116,56 +116,63 @@ namespace Parking.API.Controller
 
         [Route("NewManufacture/")]
         [HttpPost]
-        public async Task<ActionResult<Manufacturer>> AsyncAddManufacture([FromBody] Manufacturer manufacturer)
+        public async Task<bool> AsyncAddManufacture([FromBody] Manufacturer manufacturer)
         {
-            db.Manufacturers.Add(manufacturer);
-            await db.SaveChangesAsync();
-            return CreatedAtAction("Item Adicionado:", new { id = manufacturer.Id }, manufacturer);
+            try
+            {
+                db.Manufacturers.Add(manufacturer);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         [Route("NewModel/")]
         [HttpPost]
-        public async Task<ActionResult<Model>> AsyncAddModel([FromBody] Model model)
+        public async Task<bool> AsyncAddModel([FromBody] Model model)
         {
             var x = await service.RegisterNewModel(model);
             if (x)
             {
-                return CreatedAtAction("Item Adicionado:", new { id = model.Id }, model);
+                return true;
             }
             else
             {
-                return CreatedAtAction("Falha ao adicionar Model:", new { id = model.Id }, model);
+                return false;
             }
         }
 
 
         [Route("NewCar/")]
         [HttpPost]
-        public async Task<ActionResult<Car>> AsyncAddCar([FromBody] Car car)
+        public async Task<bool> AsyncAddCar([FromBody] Car car)
         {
             var x = await service.RegisterNewCar(car);
             if (x)
             {
-                return CreatedAtAction("Item Adicionado:", new { id = car.Id }, car);
+                return true;
             }
             else
             {
-                return CreatedAtAction("Falha ao adicionar Car:", new { id = car.Id }, car);
+                return false;
             }
         }
 
-        [Route("NewCarCategory/")]
+        [Route("NewCarType/")]
         [HttpPost]
-        public async Task<ActionResult<Core.Models.Type>> AsyncAddType([FromBody] Core.Models.Type type)
+        public async Task<bool> AsyncAddType([FromBody] Core.Models.Type type)
         {
             var x = await service.RegisterNewType(type);
             if (x)
             {
-                return CreatedAtAction("Item Adicionado:", new { id = type.Id }, type);
+                return true;
             }
             else
             {
-                return CreatedAtAction("Falha ao adicionar Model:", new { id = type.Id }, type);
+                return false;
             }
         }
     }

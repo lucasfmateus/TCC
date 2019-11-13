@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Core.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace UI.Service.Controller
 {
@@ -24,6 +25,10 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
         public async Task<List<Car>> GetAllCarsAsync()
@@ -39,13 +44,19 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
         public async Task<List<Model>> GetAllModelsAsync()
         {
             try
             {
-                var request = await client.GetAsync("Car/GetModels");
+                var get = new HttpClient();
+                get.BaseAddress = new Uri("http://localhost:5000/api/");
+                var request = await get.GetAsync("Car/GetModels");
 
                 return await request.Content.ReadAsAsync<List<Model>>();
 
@@ -54,6 +65,10 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
         public async Task<List<Manufacturer>> GetAllManufacturesAsync()
@@ -61,7 +76,6 @@ namespace UI.Service.Controller
             try
             {
                 var request = await client.GetAsync("Car/GetManufactures/");
-
                 return await request.Content.ReadAsAsync<List<Manufacturer>>();
 
             }
@@ -69,13 +83,19 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
         public async Task<List<Core.Models.Type>> GetAllTypesAsync()
         {
             try
             {
-                var request = await client.GetAsync("Car/GetTypes");
+                var get = new HttpClient();
+                get.BaseAddress = new Uri("http://localhost:5000/api/");
+                var request = await get.GetAsync("Car/GetTypes");
 
                 return await request.Content.ReadAsAsync<List<Core.Models.Type>>();
 
@@ -83,6 +103,10 @@ namespace UI.Service.Controller
             catch (Exception)
             {
                 return null;
+            }
+            finally
+            {
+                ParkingClientReset();
             }
         }
 
@@ -100,6 +124,10 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
         public async Task<Model> GetModelByNameAsync(string name)
@@ -115,6 +143,10 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
         public async Task<Core.Models.Type> GetTypeByNameAsync(string name)
         {
@@ -129,9 +161,13 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
-        public async Task<Manufacturer> NewManufactureAsync(Manufacturer manufacturer)
+        public async Task<bool> NewManufactureAsync(Manufacturer manufacturer)
         {
             var myContent = JsonConvert.SerializeObject(manufacturer);
 
@@ -143,18 +179,22 @@ namespace UI.Service.Controller
                 {
                     var request = await client.PostAsync("Car/NewManufacture/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
-                    return await request.Content.ReadAsAsync<Manufacturer>();
+                    return await request.Content.ReadAsAsync<bool>();
 
                 }
                 catch (Exception ex)
                 {
-                    return null;
+                    return false;
+                }
+                finally
+                {
+                    ParkingClientReset();
                 }
             }
 
         }
 
-        public async Task<Model> NewModelAsync(Model model)
+        public async Task<bool> NewModelAsync(Model model)
         {
             var myContent = JsonConvert.SerializeObject(model);
 
@@ -166,18 +206,22 @@ namespace UI.Service.Controller
                 {
                     var request = await client.PostAsync("Car/NewModel/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
-                    return await request.Content.ReadAsAsync<Model>();
+                    return await request.Content.ReadAsAsync<bool>();
 
                 }
                 catch (Exception)
                 {
-                    return null;
+                    return false;
+                }
+                finally
+                {
+                    ParkingClientReset();
                 }
             }
 
         }
 
-        public async Task<Car> NewCarAsync(Car car)
+        public async Task<bool> NewCarAsync(Car car)
         {
             var myContent = JsonConvert.SerializeObject(car);
 
@@ -189,18 +233,22 @@ namespace UI.Service.Controller
                 {
                     var request = await client.PostAsync("Car/NewCar/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
-                    return await request.Content.ReadAsAsync<Car>();
+                    return await request.Content.ReadAsAsync<bool>();
 
                 }
                 catch (Exception)
                 {
-                    return null;
+                    return false;
+                }
+                finally
+                {
+                    ParkingClientReset();
                 }
             }
 
         }
 
-        public async Task<Core.Models.Type> NewTypeAsync(Core.Models.Type type)
+        public async Task<bool> NewTypeAsync(Core.Models.Type type)
         {
             var myContent = JsonConvert.SerializeObject(type);
 
@@ -212,12 +260,16 @@ namespace UI.Service.Controller
                 {
                     var request = await client.PostAsync("Car/NewCarType/", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
-                    return await request.Content.ReadAsAsync<Core.Models.Type>();
+                    return await request.Content.ReadAsAsync<bool>();
 
                 }
                 catch (Exception)
                 {
-                    return null;
+                    return false;
+                }
+                finally
+                {
+                    ParkingClientReset();
                 }
             }
 

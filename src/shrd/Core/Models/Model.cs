@@ -12,5 +12,7 @@ namespace Core.Models
 
         [Required]
         public Manufacturer Manufacturer { get; set; }
+
+        public int Year { get; set; }
     }
 }
