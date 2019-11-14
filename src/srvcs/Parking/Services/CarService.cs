@@ -29,6 +29,8 @@ namespace Parking.API.Services
                 return false;
             }
 
+            car.Folder = await AddressFolderByIdAsync(car);
+
             db.Cars.Add(car);
 
             await db.SaveChangesAsync();
@@ -72,19 +74,18 @@ namespace Parking.API.Services
 
         public async Task<List<string>> AddressFolderAsync()
         {
-            var m = db.Cars.Include(x => x.Model).Select(x => x.Model.Name).ToList();
-            var p = db.Cars.Include(x => x.Model).Select(x => x.Model.Manufacturer.Name).ToList();
-            var t = db.Cars.Include(x => x.Type).Select(x => x.Type.Name).ToList();
+            var m = db.Cars.Select(x => x.Folder).ToList();
+            return m;
+        }
 
-            List<string> address = new List<string>();
+
+        public async Task<string> AddressFolderByIdAsync(Car car)
+        {          
 
             StringBuilder str = new StringBuilder();
-
-            for (int i = 0; i < m.Count; i++)
-            {
-                address.Add(str.AppendFormat("{0}__{1}__{2}", p[i], m[i], t[i]).ToString());
-                str.Clear();
-            }
+            
+            var address = str.AppendFormat("{0}__{1}__{2}__{3}", car.Model.Manufacturer.Name, car.Model.Name, car.Model.Year, car.Type.Name).ToString();
+            str.Clear();
 
             return address;
         }

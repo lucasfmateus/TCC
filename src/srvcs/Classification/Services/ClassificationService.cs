@@ -43,7 +43,7 @@ namespace Classification.Services
             {
                 var label = $"{car.Model.Manufacturer.Name}__{car.Model.Name}__{car.Model.Year}__{car.Type.Name}";
 
-                lablelsDict.Add(label, car.ImagesDirectory);
+                lablelsDict.Add(label, car.Folder);
             }
 
             var request = "http://127.0.0.1:5000/"
@@ -82,22 +82,48 @@ namespace Classification.Services
                 var year = names[2];
                 var type = names[3].ToUpper();
 
-                var car = db.Cars.FirstOrDefault(x => 
+                var car = db.Cars.FirstOrDefault(x =>
                 x.Model.Manufacturer.Name.ToUpper().Equals(manufacturerName) &&
                 x.Model.Name.ToUpper().Equals(modelName) &&
                 x.Model.Year.ToString().Equals(year) &&
                 x.Type.Name.Equals(type));
 
-                if(car == null)
+                if (car == null)
                 {
                     throw new Exception("Veículo não encontrado na base de dados do sistema.");
                 }
-                else if(result.Value < 70)
+                else if (result.Value < 70)
                 {
                     throw new Exception($"Veículo não reconhecido (certeza: {result.Value}).");
                 }
 
                 return car;
+
+                //return new Car
+                //{
+                //    Id = "77",
+                //    CreateAt = DateTimeOffset.Now,
+                //    Model = new Model
+                //    {
+                //        Name = "Fusquinha",
+                //        Id = "77",
+                //        CreateAt = DateTimeOffset.Now,
+                //        Year = 2019,
+                //        Manufacturer = new Manufacturer
+                //        {
+                //            CreateAt = DateTime.Now,
+                //            Id = "77",
+                //            Name = "Volks"
+                //        },
+
+                //    },
+                //    Type = new Core.Models.Type
+                //    {
+                //        Id = "77",
+                //        CreateAt = DateTimeOffset.Now,
+                //        Name = "Sport"
+                //    }
+                //};
             }
             catch(Exception ex)
             {

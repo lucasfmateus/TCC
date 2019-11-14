@@ -33,7 +33,7 @@ namespace Classification.Controllers
 
         [Route("Classificate/")]
         [HttpGet]
-        public async Task<Car> GetAllCars([FromQuery] string folder)
+        public async Task<Car> GetClassification([FromQuery] string folder)
         {
             return await classificationService.ClassificateAsync(folder);
         }        

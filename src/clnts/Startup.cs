@@ -31,6 +31,7 @@ namespace UI
             services.AddSingleton<ParkedController>();
             services.AddSingleton<SlotController>();
             services.AddSingleton<CarController>();
+            services.AddSingleton<ClassificationController>();
             services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
             services.AddServerSideBlazor(); 
             

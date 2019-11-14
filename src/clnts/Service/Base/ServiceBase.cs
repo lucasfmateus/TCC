@@ -29,7 +29,7 @@ namespace UI.Service.Base
         public void ClassificationClientReset()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:5000/api/");
+            client.BaseAddress = new Uri("http://localhost:49879/api/");
         }
 
     }
