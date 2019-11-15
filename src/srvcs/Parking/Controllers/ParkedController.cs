@@ -22,7 +22,7 @@ namespace Parking.API.Controller
         {
             this.db = db;
             this.service = new ParkedService(this.db);
-        }
+        } 
 
         [Route("GetBusySlots/")]
         [HttpGet]
