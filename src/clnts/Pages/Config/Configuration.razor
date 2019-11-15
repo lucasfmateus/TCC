@@ -3,12 +3,7 @@
 @inject CarController carService
 
 <div class="row">
-    @if (Loading == false)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
+
         <div class="card">
 
             <h1>Novo Tipo</h1>
@@ -73,7 +68,7 @@
 
             <h1>Cadatro de Modelo</h1>
 
-            @if (Loading == false)
+            @if (LoadingMan == false)
             {
                 <p><em>Loading...</em></p>}
             else
@@ -116,11 +111,7 @@
 
             <h1>Cadatro de Fabricante</h1>
 
-            @if (Loading == false)
-            {
-                <p><em>Loading...</em></p>}
-            else
-            {
+
                 <div class="row" style="padding-top:10px">
 
                     <div class="col-md-4">
@@ -133,9 +124,9 @@
                         <button type="submit" @onclick="RegisterNewManufacturer">Cadastrar</button>
                     </div>
                 </div>
-            }
+            
         </div>
-    }
+   
 </div>
 
 
@@ -149,6 +140,7 @@
     List<Manufacturer> manufacturies = new List<Manufacturer>();
     List<Model> models = new List<Model>();
     List<Core.Models.Type> types = new List<Core.Models.Type>();
+    bool LoadingMan = false;
     bool Loading = false;
     string modelName { get; set; }
     string typeName { get; set; }
@@ -170,20 +162,15 @@
         if (NewType.Name != null)
         {
             var x = await carService.NewTypeAsync(NewType);
-            carService.client.DefaultRequestHeaders.Accept.Clear();
+            NewType = new Core.Models.Type();
         }
+
+        await Load();
     }
 
     protected override async Task OnInitializedAsync()
     {
-        manufacturies = await carService.GetAllManufacturesAsync();
-        models = await carService.GetAllModelsAsync();
-        types = await carService.GetAllTypesAsync();
-
-        if (manufacturies != null && models != null && types != null)
-        {
-            Loading = true;
-        }
+        await Load();
     }
 
     void ModelClicked(ChangeEventArgs modelEvent)
@@ -240,7 +227,12 @@
             models = await carService.GetAllModelsAsync();
             types = await carService.GetAllTypesAsync();
 
-            if (manufacturies != null && models != null && types != null)
+            if (manufacturies != null )
+            { 
+                LoadingMan = true;
+            }
+
+            if (types != null && models != null)
             {
                 Loading = true;
             }
@@ -259,7 +251,10 @@
         if (NewManufacturer.Name != null)
         {
             var x = await carService.NewManufactureAsync(NewManufacturer);
+            NewManufacturer = new Manufacturer();
         }
+
+        await Load();
     }
 
 }
