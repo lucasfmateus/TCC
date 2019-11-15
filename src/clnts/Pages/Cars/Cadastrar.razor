@@ -40,17 +40,22 @@
 
                 <p>
                     <label>Modelo: </label>
-                    <label> @registred.Model.Name </label/>
+                    <label> @registred.Key.Model.Name </label/>
                 </p>
 
                 <p>
                     <label>Ano: </label>
-                    <label> @registred.Model.Year </label/>
+                    <label> @registred.Key.Model.Year </label/>
                 </p>
 
                 <p>
                     <label>Tipo: </label>
-                    <label> @registred.Type.Name </label/>
+                    <label> @registred.Key.Type.Name </label/>
+                </p>
+
+                <p>
+                    <label>Precisão: </label>
+                    <label> @registred.Value </label/>
                 </p>
 
                 <button @onclick="AlocateNewCar" type="submit">Alocar carro</button>
@@ -78,7 +83,7 @@
 
     string result = String.Empty;
 
-    public Car registred;
+    public KeyValuePair<Car, decimal> registred;
 
     async Task HandleSelection(IFileListEntry[] files)
     {
@@ -125,14 +130,18 @@
 
     public async Task AlocateNewCar()
     {
-        if (registred.Model != null && registred.Type != null)
+        if (registred.Key.Model != null && registred.Key.Type != null)
         {
-            var x = await parkingService.NewParkedAsync(registred);
+            var x = await parkingService.NewParkedAsync(registred.);
 
-            //if (x)
-            //{
-            result = "Carro Estacionado";
-            //}
+            if (x != null)
+            {
+                result = ("Veículo alocado na vaga: Nome: " + x.Name+" | Distância da porta: "+x.DistDoor);
+            }
+            else
+            {
+                result = "Erro ao realizar alocação do veículo.";
+            }
         }
     }
 

@@ -24,6 +24,12 @@ namespace Parking.API.Services
 
             var t = db.Set<Core.Models.Type>().Where(x => x.Id == car.Type.Id).FirstOrDefault();
 
+            var n = db.Set<Car>().Where(x => x.Model.Name == car.Model.Name && x.Type.Name == car.Type.Name).FirstOrDefault();
+
+            if (n != null)
+            {
+                return false;
+            }
             if (m == null || t == null)
             {
                 return false;
@@ -42,9 +48,10 @@ namespace Parking.API.Services
         public async Task<bool> RegisterNewModel(Model model)
         {
 
-            var m = db.Set<Manufacturer>().Where(x => x.Id == model.Manufacturer.Id).FirstOrDefault();
+            var m = db.Set<Manufacturer>().Where(x => x.Id == model.Manufacturer.Id).AsNoTracking().FirstOrDefault();
+            var n = db.Set<Manufacturer>().Where(x => x.Name == model.Manufacturer.Name).AsNoTracking().FirstOrDefault();
 
-            if (m == null)
+            if (m == null && n != null)
             {
                 return false;
             }

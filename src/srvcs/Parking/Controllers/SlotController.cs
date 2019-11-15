@@ -56,18 +56,16 @@ namespace Parking.API.Controller
         {
             try
             {
-                var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().AsEnumerable();
+                var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().ToList();
 
                 slot.GenerateId();
                 slot.IsBusy = false;
                 slot.Types = new List<SlotType>();
-
-
-                db.Slots.Add(slot);
+                List<SlotType> aux = new List<SlotType>();
 
                 foreach (var type in types)
                 {
-                    db.Set<Core.Models.SlotType>().Add(
+                    aux.Add(
                     new SlotType()
                     {
                         TypeId = type.Id,
@@ -75,6 +73,10 @@ namespace Parking.API.Controller
                     });
                 }
 
+                slot.Types = aux;
+
+                db.Slots.Add(slot);
+                
                 await db.SaveChangesAsync();
 
                 return true;
@@ -87,5 +89,34 @@ namespace Parking.API.Controller
             
         }
 
+        [Route("DeleteSlot")]
+        [HttpDelete]
+        public async Task DeleteSlotAsync([FromQuery] string slotId)
+        {
+            try
+            {
+                var p = db.Set<Slot>().Where(x => x.Id == slotId).FirstOrDefault();
+
+                if (p == null)
+                {
+                    throw new Exception("Vaga não encontrada no Banco.");
+                }
+
+
+                var a = db.Set<ParkedCar>().Where(x => x.Slot.Id == p.Id).AsNoTracking().FirstOrDefault();
+
+                if (a != null)
+                {
+                    throw new Exception("Não foi possivel deletar esta vaga. Existe um veículo alocado nessa vaga.");
+                }
+
+                db.Slots.Remove(p);
+                
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
     }
 }

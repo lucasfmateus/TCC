@@ -51,17 +51,9 @@ namespace Parking.API.Controller
 
         [Route("NewParked/")]
         [HttpPost]
-        public async Task<ActionResult<ParkedCar>> AsyncNewCarParked([FromBody] Car car)
+        public async Task<Slot> AsyncNewCarParked([FromBody] Car car)
         {
-            var x = await service.AllocateCar(car);
-            if (x)
-            {
-                return CreatedAtAction("Carro alocado com sucesso:", new { id = car.Id }, car);
-            }
-            else
-            {
-                return CreatedAtAction("Falha ao alocar carro:", new { id = car.Id }, car);
-            }
+            return await service.AllocateCar(car);
         }
 
     }

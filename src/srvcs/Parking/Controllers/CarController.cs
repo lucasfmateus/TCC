@@ -175,5 +175,116 @@ namespace Parking.API.Controller
                 return false;
             }
         }
+
+        [Route("DeleteCar")]
+        [HttpDelete]
+        public async Task DeleteCarAsync([FromQuery] string carId)
+        {
+            try
+            {
+                var p = db.Set<Car>().Where(x => x.Id == carId).FirstOrDefault();
+
+                if(p == null)
+                {
+                    throw new Exception("Carro não encontrado no Banco.");
+                }
+                db.Cars.Remove(p);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        [Route("DeleteModel")]
+        [HttpDelete]
+        public async Task DeleteModelAsync([FromQuery] string modelId)
+        {
+            try
+            {
+                var p = db.Set<Model>().Where(x => x.Id == modelId).FirstOrDefault();
+
+                if (p == null)
+                {
+                    throw new Exception("Modelo não encontrado no Banco.");
+                }
+
+                var c = db.Set<Car>().Where(x => x.Model.Id == p.Id).AsNoTracking().ToList();
+
+                if(c != null)
+                {
+                    throw new Exception("Não foi possivel deletar este modelo. Existe " + c.Count() + " veículo(s) com esse modelo.");
+                }
+
+                db.Models.Remove(p);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        [Route("DeleteManufacture")]
+        [HttpDelete]
+        public async Task DeleteManufactureAsync([FromQuery] string manufactureId)
+        {
+            try
+            {
+                var p = db.Set<Manufacturer>().Where(x => x.Id == manufactureId).FirstOrDefault();
+
+                if (p == null)
+                {
+                    throw new Exception("Fabricante não encontrada no Banco.");
+                }
+
+                var m = db.Set<Model>().Where(x => x.Manufacturer.Id == manufactureId).AsNoTracking().ToList();
+
+                if (m != null)
+                {
+                    throw new Exception("Não foi possivel deletar esta fabricante. Existe " + m.Count() + " modelo(s) com essa fabricante.");
+                }
+                db.Manufacturers.Remove(p);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        [Route("DeleteType")]
+        [HttpDelete]
+        public async Task DeleteTypeAsync([FromQuery] string typeId)
+        {
+            try
+            {
+                var p = db.Set<Core.Models.Type>().Where(x => x.Id == typeId).FirstOrDefault();
+
+                if (p == null)
+                {
+                    throw new Exception("Tipo não encontrado no Banco.");
+                }
+
+                var c = db.Set<Car>().Where(x => x.Type.Id == p.Id).AsNoTracking().ToList();
+
+                if (c != null)
+                {
+                    throw new Exception("Não foi possivel deletar este tipo. Existe " + c.Count() + " veículo(s) com esse tipo.");
+                }
+
+                var s = db.Set<SlotType>().Where(x => x.TypeId == typeId).AsNoTracking().ToList();
+
+                if (s != null)
+                {
+                    throw new Exception("Não foi possivel deletar este tipo. Existe " + c.Count() + " Slots(s) com esse tipo.");
+                }
+
+                db.Types.Remove(p);
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
+
     }
 }

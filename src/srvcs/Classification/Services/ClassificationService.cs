@@ -58,9 +58,9 @@ namespace Classification.Services
         /// <summary>
         /// Classifica uma imagem em um dos carros conhecidos
         /// </summary>
-        /// <param name="imageDirectory">Diretório da imagem</param>
+        /// <param name="image">Diretório da imagem</param>
         /// <returns></returns>
-        public async Task<Car> ClassificateAsync(string imageDirectory)
+        public async Task<KeyValuePair<Car, decimal>> ClassificateAsync(string image) // TODO: mudar envio para imagem em base 64
         {
             try
             {
@@ -69,7 +69,7 @@ namespace Classification.Services
                     .WithTimeout(TimeSpan.FromSeconds(5));
 
                 var response = await request
-                    .PostJsonAsync(imageDirectory);
+                    .PostJsonAsync(image);
                     //.PostMultipartAsync(mp => mp
                     //    .AddFile("FilePath", imageDirectory));
 
@@ -78,6 +78,7 @@ namespace Classification.Services
                 string[] separator = { "__" };
                 var names = result.Key.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
+                var accuracy = result.Value;
                 var manufacturerName = names[0].ToUpper();
                 var modelName = names[1].ToUpper();
                 var year = names[2];
@@ -98,7 +99,7 @@ namespace Classification.Services
                     throw new Exception($"Veículo não reconhecido (certeza: {result.Value}).");
                 }
 
-                return car;
+                return new  KeyValuePair<Car, decimal>(car, accuracy);
 
                 //return new Car
                 //{

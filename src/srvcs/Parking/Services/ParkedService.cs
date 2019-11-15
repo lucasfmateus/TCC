@@ -18,43 +18,51 @@ namespace Parking.API.Services
             this.db = db;
         }
 
-        public async Task<bool> AllocateCar(Car car)
+        public async Task<Slot> AllocateCar(Car car)
         {
-            var c = db.Set<Car>()
+            try
+            {
+                var c = db.Set<Car>()
                     .Include(x => x.Model)
                     .Include(x => x.Type)
                     .Include(x => x.Model.Manufacturer)
                     .Where(x => x.Id == car.Id)
                     .FirstOrDefault();
 
-            var p = db.Set<SlotType>()
-                        .Include(x => x.Slot)
-                        .Include(x => x.Type)
-                        .OrderBy(x => x.Slot.DistDoor)
-                        .Where(t => t.Type.Name == car.Type.Name && t.Slot.IsBusy == false)
-                        .FirstOrDefault();
+                var p = db.Set<SlotType>()
+                            .Include(x => x.Slot)
+                            .Include(x => x.Type)
+                            .OrderBy(x => x.Slot.DistDoor)
+                            .Where(t => t.Type.Name == car.Type.Name && t.Slot.IsBusy == false)
+                            .FirstOrDefault();
 
-            var v = p?.Slot;
+                var v = p?.Slot;
 
-            if (c == null || v == null)
-            {
-                return false;
-            }
-
-            v.IsBusy = true;
-
-            db.Parked.Add(
-                new ParkedCar
+                if (c == null || v == null)
                 {
-                    Car = c,
-                    Slot = v,
-                    CreateAt = DateTimeOffset.Now
-                });
+                    return null;
+                }
 
-            await db.SaveChangesAsync();
+                v.IsBusy = true;
 
-            return true;
+                db.Parked.Add(
+                    new ParkedCar
+                    {
+                        Car = c,
+                        Slot = v,
+                        CreateAt = DateTimeOffset.Now
+                    });
 
+                await db.SaveChangesAsync();
+
+                return v;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            
         }
 
     }
