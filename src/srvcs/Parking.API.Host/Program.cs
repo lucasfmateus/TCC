@@ -20,7 +20,7 @@ namespace ParkingAPI
 
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:5000")
+                .UseUrls("http://*:5001")
                 .UseStartup<ParkingApiService>();
     }
 }

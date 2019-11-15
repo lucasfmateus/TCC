@@ -26,7 +26,7 @@ namespace Parking.API.Controller
         public List<Slot> GetAllSlots()
         {
             var p = db.Slots.ToList();
-                        
+
             return p;
         }
 
@@ -50,25 +50,41 @@ namespace Parking.API.Controller
             return p;
         }
 
-        [Route("NewSlot/")]
+        [Route("NewSlot")]
         [HttpPost]
-        public async Task<bool> AsyncAddSlot([FromBody] Slot slot)
+        public async Task<bool> AddSlotAsync([FromBody] Slot slot)
         {
-
-            var c = db.Set<Core.Models.Type>().Where(x => slot.Types.Select( y => y.TypeId).Contains(x.Id)).FirstOrDefault();
-
-            if (c == null)
+            try
             {
-                return false;
+                var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().AsEnumerable();
+
+                slot.GenerateId();
+                slot.IsBusy = false;
+                slot.Types = new List<SlotType>();
+
+
+                db.Slots.Add(slot);
+
+                foreach (var type in types)
+                {
+                    db.Set<Core.Models.SlotType>().Add(
+                    new SlotType()
+                    {
+                        TypeId = type.Id,
+                        SlotId = slot.Id
+                    });
+                }
+
+                await db.SaveChangesAsync();
+
+                return true;
             }
+            catch (Exception ex)
+            {
 
-            slot.IsBusy = false;
-
-            db.Slots.Add(slot);
-
-            await db.SaveChangesAsync();
+                throw;
+            }
             
-            return true;
         }
 
     }

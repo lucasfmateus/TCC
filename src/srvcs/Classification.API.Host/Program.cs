@@ -12,12 +12,12 @@ namespace Classification.API.Host
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().MigrateDatabase<ParkingContext>().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:49879")
+                .UseUrls("http://*:5002")
                 .UseStartup<ClassificationApiService>();        
     }
 }

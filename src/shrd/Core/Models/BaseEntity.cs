@@ -9,6 +9,12 @@ namespace Core.Models
     {
         [Key]
         public string Id { get; set; }
+        
         public DateTimeOffset CreateAt { get; set; }
+
+        public void GenerateId()
+        {
+            Id = Guid.NewGuid().ToString("N");
+        }
     }
 }

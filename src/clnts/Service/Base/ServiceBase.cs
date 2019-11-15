@@ -8,7 +8,7 @@ namespace UI.Service.Base
 {
     public class ServiceBase
     {
-        public HttpClient client { get; set; }
+        public HttpClient client = new HttpClient();
         public HttpClient classificationClient = new HttpClient();
 
         public ServiceBase()
@@ -23,13 +23,13 @@ namespace UI.Service.Base
         public void ParkingClientReset()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:5000/api/");
+            client.BaseAddress = new Uri("http://localhost:5001/api/");
         }
 
         public void ClassificationClientReset()
         {
-            client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:49879/api/");
+            classificationClient = new HttpClient();
+            classificationClient.BaseAddress = new Uri("http://localhost:5002/api/");
         }
 
     }

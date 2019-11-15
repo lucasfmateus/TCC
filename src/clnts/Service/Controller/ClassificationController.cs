@@ -11,7 +11,7 @@ namespace UI.Service.Controller
     public class ClassificationController : ServiceBase
     {
 
-        public async Task<Car> GetAllCars(string folder)
+        public async Task<Car> GetCassification(string folder)
         {
             try
             {

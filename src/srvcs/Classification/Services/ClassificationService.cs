@@ -69,8 +69,9 @@ namespace Classification.Services
                     .WithTimeout(TimeSpan.FromSeconds(5));
 
                 var response = await request
-                    .PostMultipartAsync(mp => mp
-                        .AddFile("FilePath", imageDirectory));
+                    .PostJsonAsync(imageDirectory);
+                    //.PostMultipartAsync(mp => mp
+                    //    .AddFile("FilePath", imageDirectory));
 
                 var result = JsonConvert.DeserializeObject<KeyValuePair<string, decimal>>(await response.Content.ReadAsStringAsync());
 

@@ -55,6 +55,15 @@
 
                 <button @onclick="AlocateNewCar" type="submit">Alocar carro</button>
             }
+
+            @if(result == "")
+            {
+
+            }
+            else
+            {
+                <p>@result</p>
+            }
         </div>
     </div>
 
@@ -85,31 +94,33 @@
 
             imageData = $"data:image/jpg;base64,{Convert.ToBase64String(ms.ToArray())}";
         }
-        registred = new Car
-        {
-            Id = "77",
-            CreateAt = DateTimeOffset.Now,
-            Model = new Model
-            {
-                Name = "Fusquinha",
-                Id = "77",
-                CreateAt = DateTimeOffset.Now,
-                Year = 2019,
-                Manufacturer = new Manufacturer
-                {
-                    CreateAt = DateTime.Now,
-                    Id = "77",
-                    Name = "Volks"
-                },
 
-            },
-            Type = new Core.Models.Type
-            {
-                Id = "77",
-                CreateAt = DateTimeOffset.Now,
-                Name = "Sport"
-            }
-        };
+        registred = await classificationService.GetCassification(imageData);
+        //registred = new Car
+        //{
+        //    Id = "77",
+        //    CreateAt = DateTimeOffset.Now,
+        //    Model = new Model
+        //    {
+        //        Name = "Fusquinha",
+        //        Id = "77",
+        //        CreateAt = DateTimeOffset.Now,
+        //        Year = 2019,
+        //        Manufacturer = new Manufacturer
+        //        {
+        //            CreateAt = DateTime.Now,
+        //            Id = "77",
+        //            Name = "Volks"
+        //        },
+
+        //    },
+        //    Type = new Core.Models.Type
+        //    {
+        //        Id = "77",
+        //        CreateAt = DateTimeOffset.Now,
+        //        Name = "Sport"
+        //    }
+        //};
     }
 
     public async Task AlocateNewCar()

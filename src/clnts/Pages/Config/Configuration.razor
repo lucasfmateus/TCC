@@ -11,35 +11,6 @@
     {
         <div class="card">
 
-            <h1>Nova Vaga</h1>
-
-            <EditForm Model="@NewSlot" OnValidSubmit="@AddNewSlot">
-
-                @*<p>
-                    <label for="Id">Id</label>
-                    <input type="text" bind="@NewSlot.Id" />
-                </p>*@
-
-                <p>
-                    <label for="Name">Nome</label>
-                    <input type="text" bind="@NewSlot.Name" />
-                </p>
-
-
-                <p>
-                    <label for="DistDoor">Distância da Porta</label>
-                    <input type="text" bind="@NewSlot.DistDoor" />
-                </p>
-
-                <p>
-                    <label for="Type">Tipo</label>
-                    <input type="text" bind="@NewSlot.Types" />
-                </p>
-
-                <button type="submit">Cadastrar</button>
-
-            </EditForm>
-
             <h1>Novo Tipo</h1>
 
             <EditForm Model="@NewType" OnValidSubmit="@AddNewType">
