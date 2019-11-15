@@ -3,7 +3,12 @@
 @inject CarController carService
 
 <div class="row">
-
+    @if (LoadingPage == false)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
         <div class="card">
 
             <h1>Novo Tipo</h1>
@@ -11,9 +16,9 @@
             <EditForm Model="@NewType" OnValidSubmit="@AddNewType">
 
                 @*<p>
-                    <label for="Id">Id</label>
-                    <input type="text" @bind="NewType.Id" />
-                </p>*@
+                        <label for="Id">Id</label>
+                        <input type="text" @bind="NewType.Id" />
+                    </p>*@
 
                 <p>
                     <label for="Name">Nome</label>
@@ -74,10 +79,10 @@
             else
             {
                 @*<div class="row">
-                    <div class="col-md-4">
-                        <label class="control-label">Modelo</label>
-                    </div>
-                </div>*@
+                        <div class="col-md-4">
+                            <label class="control-label">Modelo</label>
+                        </div>
+                    </div>*@
 
                 <div class="row" style="padding-top:10px">
 
@@ -112,149 +117,161 @@
             <h1>Cadatro de Fabricante</h1>
 
 
-                <div class="row" style="padding-top:10px">
+            <div class="row" style="padding-top:10px">
 
-                    <div class="col-md-4">
+                <div class="col-md-4">
 
-                        <p>
-                            <label for="Name">Nome</label>
-                            <input type="text" @bind="NewManufacturer.Name" />
-                        </p>
+                    <p>
+                        <label for="Name">Nome</label>
+                        <input type="text" @bind="NewManufacturer.Name" />
+                    </p>
 
-                        <button type="submit" @onclick="RegisterNewManufacturer">Cadastrar</button>
-                    </div>
+                    <button type="submit" @onclick="RegisterNewManufacturer">Cadastrar</button>
                 </div>
-            
+            </div>
+
         </div>
-   
+
+    }
+
 </div>
 
 
-@code{
+    @code{
 
-    Slot NewSlot = new Slot();
-    Core.Models.Type NewType = new Core.Models.Type();
-    Car NewCar = new Car();
-    Model NewModel = new Model();
-    Manufacturer NewManufacturer = new Manufacturer();
-    List<Manufacturer> manufacturies = new List<Manufacturer>();
-    List<Model> models = new List<Model>();
-    List<Core.Models.Type> types = new List<Core.Models.Type>();
-    bool LoadingMan = false;
-    bool Loading = false;
-    string modelName { get; set; }
-    string typeName { get; set; }
-    string manufacturerName { get; set; }
+        Slot NewSlot = new Slot();
+        Core.Models.Type NewType = new Core.Models.Type();
+        Car NewCar = new Car();
+        Model NewModel = new Model();
+        Manufacturer NewManufacturer = new Manufacturer();
 
-    bool collapseNavMenu = true;
-    void ToggleNavMenu() { collapseNavMenu = !collapseNavMenu; }
+        List<Manufacturer> manufacturies = new List<Manufacturer>();
+        List<Model> models = new List<Model>();
+        List<Core.Models.Type> types = new List<Core.Models.Type>();
 
-    protected async Task AddNewSlot()
-    {
-        if (NewSlot.Name != null && NewSlot.Types! == null)
+        bool LoadingMan = false;
+        bool LoadingPage = false;
+        bool Loading = false;
+
+
+        string modelName { get; set; }
+        string typeName { get; set; }
+        string manufacturerName { get; set; }
+
+        bool collapseNavMenu = true;
+
+        void ToggleNavMenu()
         {
-            await slotService.NewSlotAsync(NewSlot);
-        }
-    }
-
-    protected async Task AddNewType()
-    {
-        if (NewType.Name != null)
-        {
-            var x = await carService.NewTypeAsync(NewType);
-            NewType = new Core.Models.Type();
+            collapseNavMenu = !collapseNavMenu;
         }
 
-        await Load();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await Load();
-    }
-
-    void ModelClicked(ChangeEventArgs modelEvent)
-    {
-        modelName = modelEvent.Value.ToString();
-        this.StateHasChanged();
-    }
-
-    void TypeClicked(ChangeEventArgs typeEvent)
-    {
-        typeName = typeEvent.Value.ToString();
-        this.StateHasChanged();
-    }
-
-    void ManufacturerClicked(ChangeEventArgs manufacturerEvent)
-    {
-        manufacturerName = manufacturerEvent.Value.ToString();
-        this.StateHasChanged();
-    }
-
-    public async Task RegisterNewCar()
-    {
-        NewCar.Model = await carService.GetModelByNameAsync(modelName);
-        NewCar.Type = await carService.GetTypeByNameAsync(typeName);
-
-        if (NewCar.Model != null && NewCar.Type != null)
+        protected async Task AddNewSlot()
         {
-            var x = await carService.NewCarAsync(NewCar);
-        }
-
-        await Load();
-
-    }
-
-    public async Task RegisterNewModel()
-    {
-        if (NewModel.Name != null)
-        {
-            NewModel.Manufacturer = await carService.GetManufacturesByNameAsync(manufacturerName);
-            var x = await carService.NewModelAsync(NewModel);
-            NewModel = new Model();
-        }
-
-        await Load();
-    }
-
-    public async Task Load()
-    {
-        Loading = false;
-
-        try
-        {
-            manufacturies = await carService.GetAllManufacturesAsync();
-            models = await carService.GetAllModelsAsync();
-            types = await carService.GetAllTypesAsync();
-
-            if (manufacturies != null )
-            { 
-                LoadingMan = true;
-            }
-
-            if (types != null && models != null)
+            if (NewSlot.Name != null && NewSlot.Types! == null)
             {
-                Loading = true;
+                await slotService.NewSlotAsync(NewSlot);
+            }
+        }
+
+        protected async Task AddNewType()
+        {
+            if (NewType.Name != null)
+            {
+                var x = await carService.NewTypeAsync(NewType);
+                NewType = new Core.Models.Type();
             }
 
+            await Load();
         }
-        catch (Exception ex)
+
+        protected override async Task OnInitializedAsync()
         {
+            await Load();
+            LoadingPage = true;
+        }
+
+        void ModelClicked(ChangeEventArgs modelEvent)
+        {
+            modelName = modelEvent.Value.ToString();
+            this.StateHasChanged();
+        }
+
+        void TypeClicked(ChangeEventArgs typeEvent)
+        {
+            typeName = typeEvent.Value.ToString();
+            this.StateHasChanged();
+        }
+
+        void ManufacturerClicked(ChangeEventArgs manufacturerEvent)
+        {
+            manufacturerName = manufacturerEvent.Value.ToString();
+            this.StateHasChanged();
+        }
+
+        public async Task RegisterNewCar()
+        {
+            NewCar.Model = await carService.GetModelByNameAsync(modelName);
+            NewCar.Type = await carService.GetTypeByNameAsync(typeName);
+
+            if (NewCar.Model != null && NewCar.Type != null)
+            {
+                var x = await carService.NewCarAsync(NewCar);
+            }
+
+            await Load();
 
         }
 
+        public async Task RegisterNewModel()
+        {
+            if (NewModel.Name != null)
+            {
+                NewModel.Manufacturer = await carService.GetManufacturesByNameAsync(manufacturerName);
+                var x = await carService.NewModelAsync(NewModel);
+                NewModel = new Model();
+            }
+
+            await Load();
+        }
+
+        public async Task Load()
+        {
+            Loading = false;
+
+            try
+            {
+                manufacturies = await carService.GetAllManufacturesAsync();
+                models = await carService.GetAllModelsAsync();
+                types = await carService.GetAllTypesAsync();
+
+                if (manufacturies != null)
+                {
+                    LoadingMan = true;
+                }
+
+                if (types != null && models != null)
+                {
+                    Loading = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+
+        }
+
+        public async Task RegisterNewManufacturer()
+        {
+            if (NewManufacturer.Name != null)
+            {
+                var x = await carService.NewManufactureAsync(NewManufacturer);
+                NewManufacturer = new Manufacturer();
+            }
+
+            await Load();
+        }
 
     }
-
-    public async Task RegisterNewManufacturer()
-    {
-        if (NewManufacturer.Name != null)
-        {
-            var x = await carService.NewManufactureAsync(NewManufacturer);
-            NewManufacturer = new Manufacturer();
-        }
-
-        await Load();
-    }
-
-}

@@ -54,9 +54,7 @@ namespace UI.Service.Controller
         {
             try
             {
-                var get = new HttpClient();
-                get.BaseAddress = new Uri("http://localhost:5000/api/");
-                var request = await get.GetAsync("Car/GetModels");
+                var request = await client.GetAsync("Car/GetModels");
 
                 return await request.Content.ReadAsAsync<List<Model>>();
 
@@ -93,9 +91,7 @@ namespace UI.Service.Controller
         {
             try
             {
-                var get = new HttpClient();
-                get.BaseAddress = new Uri("http://localhost:5000/api/");
-                var request = await get.GetAsync("Car/GetTypes");
+                var request = await client.GetAsync("Car/GetTypes");
 
                 return await request.Content.ReadAsAsync<List<Core.Models.Type>>();
 
