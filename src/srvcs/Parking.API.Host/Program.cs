@@ -15,9 +15,11 @@ namespace ParkingAPI
     {
         public static void Main(string[] args)
         {
+            //Inicializa projeto antes e feito a migration
             CreateHostBuilder(args).Build().MigrateDatabase<ParkingContext>().Run();
         }
 
+        //Declara roda em que API se comunica, e inicializa o Projeto parking onde se encontra todos os metodos e comunicacao com o banco da API
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseUrls("http://*:5001")

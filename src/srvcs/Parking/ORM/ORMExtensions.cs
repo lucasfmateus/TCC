@@ -9,6 +9,7 @@ namespace Parking.API.Context
 {
     public static class ORMExtensions
     {
+        //Realiza migration e update data base ao rodar projeto
         public static IWebHost MigrateDatabase<T>(this IWebHost webHost) where T : DbContext
         {
             using (var scope = webHost.Services.CreateScope())

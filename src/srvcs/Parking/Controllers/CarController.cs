@@ -18,12 +18,18 @@ namespace Parking.API.Controller
         public readonly ParkingContext db;
         public readonly CarService service;
 
+        //Controller: Set das rotas utilizadas para consumo dos metodos
+        //Adicionado o contexto que connecta com o Banco de dados 
+        //Adicionado O CarService onde eh feito tratamento de alguns dados 
+
         public CarController(ParkingContext db)
         {
             this.db = db;
             this.service = new CarService(db);
         }
 
+
+        //retorna todos os carros registrados
         [Route("GetCars/")]
         [HttpGet]
         public List<Car> GetAllCar()
@@ -43,6 +49,7 @@ namespace Parking.API.Controller
             return await service.AddressFolderAsync();
         }
 
+        //retorna o carro, sendo passado o id como parametro 
         [Route("GetCarById/")]
         [HttpGet]
         public Car GetCarById([FromQuery]string id)
@@ -55,6 +62,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna todos os modelos registrados no banco
         [Route("GetModels/")]
         [HttpGet]
         public List<Model> GetAllModels()
@@ -64,6 +72,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna o modelo, sendo passado o nome como parametro 
         [Route("GetModelByName")]
         [HttpGet]
         public Model GetModelsByName([FromQuery]string name)
@@ -74,6 +83,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna todas as fabricantes registradas do banco 
         [Route("GetManufactures/")]
         [HttpGet]
         public List<Manufacturer> GetAllManufactures()
@@ -82,6 +92,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna todos os tipos registrados do banco 
         [Route("GetTypes/")]
         [HttpGet]
         public List<Core.Models.Type> GetAllTypes()
@@ -90,6 +101,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna a fabricante, sendo passado o nome como parametro 
         [Route("GetManufacturesByName")]
         [HttpGet]
         public Manufacturer GetManufacturesByName([FromQuery] string name)
@@ -98,6 +110,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna o tipo, sendo passado o nome como parametro 
         [Route("GetTypeByName")]
         [HttpGet]
         public Core.Models.Type GetTypeByName([FromQuery] string name)
@@ -106,6 +119,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna o modelo, sendo passado o nome como parametro 
         [Route("GetModelByNameAsync")]
         [HttpGet]
         public Model GetModelById([FromQuery] string name)
@@ -114,6 +128,7 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //adiciona uma nova fabricante no banco
         [Route("NewManufacture/")]
         [HttpPost]
         public async Task<bool> AsyncAddManufacture([FromBody] Manufacturer manufacturer)
@@ -130,6 +145,7 @@ namespace Parking.API.Controller
             }
         }
 
+        //adiciona um novo modelo carro no banco utilizando uma fabricante ja existente
         [Route("NewModel/")]
         [HttpPost]
         public async Task<bool> AsyncAddModel([FromBody] Model model)
@@ -145,7 +161,7 @@ namespace Parking.API.Controller
             }
         }
 
-
+        //adiciona um novo carro no banco utilizando modelos e tipos ja existentes
         [Route("NewCar/")]
         [HttpPost]
         public async Task<bool> AsyncAddCar([FromBody] Car car)
@@ -161,6 +177,7 @@ namespace Parking.API.Controller
             }
         }
 
+        //adiciona um novo tipo carro no bancos
         [Route("NewCarType/")]
         [HttpPost]
         public async Task<bool> AsyncAddType([FromBody] Core.Models.Type type)
@@ -176,26 +193,36 @@ namespace Parking.API.Controller
             }
         }
 
+        //Deleta um carro do banco que nao esteja alocado em nenhuma vaga 
         [Route("DeleteCar")]
         [HttpDelete]
         public async Task DeleteCarAsync([FromQuery] string carId)
         {
             try
             {
-                var p = db.Set<Car>().Where(x => x.Id == carId).FirstOrDefault();
+                var c = db.Set<Car>().Where(x => x.Id == carId).FirstOrDefault();
 
-                if(p == null)
+                if(c == null)
                 {
                     throw new Exception("Carro não encontrado no Banco.");
                 }
-                db.Cars.Remove(p);
+                
+                var p = db.Set<ParkedCar>().Where(x => x.Car.Id == c.Id).AsNoTracking().ToList();
+
+                if (p != null)
+                {
+                    throw new Exception("Já possuiu um registro desse carro estacionado.");
+                }
+
+                db.Cars.Remove(c);
+                
                 await db.SaveChangesAsync();
             }
             catch (Exception)
             {
             }
         }
-
+        //Deleta um Modelo do Banco que nao tenha nenhum carro utilizando 
         [Route("DeleteModel")]
         [HttpDelete]
         public async Task DeleteModelAsync([FromQuery] string modelId)
@@ -223,7 +250,7 @@ namespace Parking.API.Controller
             {
             }
         }
-
+        //Deleta uma Fabricante do Banco que nao teha nenhum modelo de carro a utilizando
         [Route("DeleteManufacture")]
         [HttpDelete]
         public async Task DeleteManufactureAsync([FromQuery] string manufactureId)
@@ -251,6 +278,7 @@ namespace Parking.API.Controller
             }
         }
 
+        //Deleta um tipo já cadastrado no banco de dados que nao tenha nenhum carro e slot com o mesmo cadastrado.
         [Route("DeleteType")]
         [HttpDelete]
         public async Task DeleteTypeAsync([FromQuery] string typeId)

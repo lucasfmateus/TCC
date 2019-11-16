@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace UI.Service.Base
 {
+    //Set de endereco utilizado pela UI
     public class ServiceBase
     {
         public HttpClient client = new HttpClient();
