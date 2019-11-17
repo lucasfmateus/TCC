@@ -120,6 +120,15 @@ namespace Parking.API.Controller
             return p;
         }
 
+        //retorna o tipo, sendo passado o nome como parametro 
+        [Route("GetTypeById")]
+        [HttpGet]
+        public Core.Models.Type GetTypeById([FromQuery] string id)
+        {
+            var p = db.Types.Where(x => x.Id == id).FirstOrDefault();
+            return p;
+        }
+
         //retorna o modelo, sendo passado o nome como parametro 
         [Route("GetModelByNameAsync")]
         [HttpGet]

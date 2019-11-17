@@ -25,7 +25,8 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<Slot> GetAllSlots()
         {
-            var p = db.Slots.ToList();
+            var p = db.Slots.Include(x => x.Types)
+                            .ToList();
 
             return p;
         }
@@ -34,8 +35,18 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<Slot> GetFreeSlots()
         {
-            var p = db.Slots.Where(x => !x.IsBusy)
+            var p = db.Slots.Include(x => x.Types)
+                            .Where(x => !x.IsBusy)
+                            .AsNoTracking()
                             .ToList();
+
+            foreach (var item in p)
+            {
+                foreach (var x in item.Types)
+                {
+                    x.Type = db.Types.Where(y => y.Id == x.TypeId).FirstOrDefault();
+                }
+            }
 
             return p;
         }
@@ -53,7 +64,8 @@ namespace Parking.API.Controller
         [Route("NewSlot")]
         [HttpPost]
         public async Task<bool> AddSlotAsync([FromBody] Slot slot)
-        {
+        { 
+            
             try
             {
                 var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().ToList();
