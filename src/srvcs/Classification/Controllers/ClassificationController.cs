@@ -22,9 +22,10 @@ namespace Classification.Controllers
         {
             this.db = db;
             this.classificationService = new ClassificationService(db);
+            db.InitializeDatabase();
         }
 
-        [Route("Train/")]
+        [Route("Train")]
         [HttpGet]
         public async Task Train()
         {
@@ -33,7 +34,7 @@ namespace Classification.Controllers
 
         [Route("Classificate")]
         [HttpPost]
-        public async Task<KeyValuePair<Car, decimal>> GetClassification([FromBody] string image)
+        public async Task<Car> GetClassification([FromBody] string image)
         {
             return await classificationService.ClassificateAsync(image);
         }        
