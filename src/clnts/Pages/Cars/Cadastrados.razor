@@ -21,6 +21,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Tipo</th>
+                        <th>Fabricante</th>
                         <th>Modelo</th>
                         <th>Ano</th>
                     </tr>
@@ -31,12 +32,13 @@
 
                     @foreach (var item in RegisteredCars)
                     {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.Type.Name</td>
-                            <td>@item.Model.Name</td>
-                            <td>@item.Model.Year</td>
-                        </tr>
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Type.Name</td>
+                        <td>@item.Model.Manufacturer.Name</td>
+                        <td>@item.Model.Name</td>
+                        <td>@item.Model.Year</td>
+                    </tr>
                     }
 
                 </tbody>

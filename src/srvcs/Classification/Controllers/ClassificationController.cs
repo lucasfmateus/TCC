@@ -33,8 +33,8 @@ namespace Classification.Controllers
         }
 
         [Route("Classificate")]
-        [HttpGet]
-        public async Task<KeyValuePair<Car, decimal>> GetClassification([FromQuery] string image)
+        [HttpPost]
+        public async Task<KeyValuePair<Car, decimal>> GetClassification([FromBody] string image)
         {
             return await classificationService.ClassificateAsync(image);
         }        
