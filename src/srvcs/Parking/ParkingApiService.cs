@@ -16,6 +16,7 @@ namespace Parking.API
     public class ParkingApiService
     {
         public IConfiguration Configuration { get; }
+
         public ParkingApiService(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,24 +34,31 @@ namespace Parking.API
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddEntityFrameworkSqlServer();
+
+            //declaracao do contexto
             services.AddDbContext<ParkingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            //Configura o Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "Parking API", Version = "v1" });
             });
 
+            //injecao de dependencia dos services
             services.AddSingleton<CarService>();
             services.AddSingleton<ParkedService>();
 
         }
+
         public void Configure(IApplicationBuilder app)
         {            
             app.UseSwagger();
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Parking API");
             });
+
             app.UseAuthentication();
 
             app.UseMvc();

@@ -16,7 +16,7 @@ namespace Core.Models
         public double DistDoor { get; set; }
         [Required]
         public bool IsBusy { get; set; }
-        [Required]
+        
         public List<SlotType> Types { get; set; }
     }
 }

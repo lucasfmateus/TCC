@@ -10,7 +10,7 @@
 
         @if (RegisteredCars == null)
         {
-            <p><em>Loading...</em></p>
+            <p><em>@messageCar</em></p>
         }
         else
         {
@@ -53,7 +53,7 @@
 
         @if (Slots == null)
         {
-            <p><em>Loading...</em></p>
+            <p><em>@messageSlot</em></p>
         }
         else
         {
@@ -111,10 +111,22 @@
     List<Car> RegisteredCars;
     List<Slot> Slots;
 
+    string messageCar = "Loading ...";
+    string messageSlot = "Loading ...";
+
+    //Request da API de Carros conhecidos pelo sistema e slots existente no estacionamento
     protected override async Task OnInitializedAsync()
     {
         RegisteredCars = await carService.GetAllCarsAsync();
         Slots = await slotService.GetAllSlotsAsync();
 
+        if (RegisteredCars == null)
+        {
+            messageCar = "Nenhum carro registrado no banco.";
+        }
+        if (Slots == null)
+        {
+            messageSlot = "Nenhuma Vaga registrada no banco.";
+        }
     }
 }

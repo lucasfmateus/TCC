@@ -25,7 +25,7 @@
         </div>
 
         <div class="col">
-            @if (registred == null)
+            @if (registred.Key == null)
             {
 
             }
@@ -33,22 +33,27 @@
             {
                 <p>
                     <label>Fabricante: </label>
-                    <label>@registred.Model.Manufacturer.Name</label>
+                    <label>@registred.Key.Model.Manufacturer.Name</label>
                 </p>
 
                 <p>
                     <label>Modelo: </label>
-                    <label> @registred.Model.Name </label/>
+                    <label> @registred.Key.Model.Name </label/>
                 </p>
 
                 <p>
                     <label>Ano: </label>
-                    <label> @registred.Model.Year </label/>
+                    <label> @registred.Key.Model.Year </label/>
                 </p>
 
                 <p>
                     <label>Tipo: </label>
-                    <label> @registred.Type.Name </label/>
+                    <label> @registred.Key.Type.Name </label/>
+                </p>
+
+                <p>
+                    <label>Precisão: </label>
+                    <label> @registred.Value </label/>
                 </p>
 
                 <button @onclick="AlocateNewCar" type="submit">Alocar carro</button>
@@ -76,7 +81,7 @@
 
     string result = String.Empty;
 
-    public Car registred;
+    public KeyValuePair<Car, decimal> registred;
 
     async Task HandleSelection(IFileListEntry[] files)
     {
@@ -94,43 +99,24 @@
         }
 
         registred = await classificationService.GetCassification(imageData);
-        //registred = new Car
-        //{
-        //    Id = "77",
-        //    CreateAt = DateTimeOffset.Now,
-        //    Model = new Model
-        //    {
-        //        Name = "Fusquinha",
-        //        Id = "77",
-        //        CreateAt = DateTimeOffset.Now,
-        //        Year = 2019,
-        //        Manufacturer = new Manufacturer
-        //        {
-        //            CreateAt = DateTime.Now,
-        //            Id = "77",
-        //            Name = "Volks"
-        //        },
 
-        //    },
-        //    Type = new Core.Models.Type
-        //    {
-        //        Id = "77",
-        //        CreateAt = DateTimeOffset.Now,
-        //        Name = "Sport"
-        //    }
-        //};
     }
 
+    //Aloca um carro no estacionamento
     public async Task AlocateNewCar()
     {
-        if (registred.Model != null && registred.Type != null)
+        if (registred.Key.Model != null && registred.Key.Type != null)
         {
-            var x = await parkingService.NewParkedAsync(registred);
+            var x = await parkingService.NewParkedAsync(registred.Key);
 
-            //if (x)
-            //{
-            result = "Carro Estacionado";
-            //}
+            if (x != null)
+            {
+                result = ("Veículo alocado na vaga: Nome: " + x.Name+" | Distância da porta: "+x.DistDoor);
+            }
+            else
+            {
+                result = "Erro ao realizar alocação do veículo.";
+            }
         }
     }
 

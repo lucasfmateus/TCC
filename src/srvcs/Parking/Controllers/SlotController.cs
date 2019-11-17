@@ -56,28 +56,50 @@ namespace Parking.API.Controller
         {
             try
             {
-                var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().AsEnumerable();
-
-                slot.GenerateId();
+                var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().ToList();
+                
+                var s = db.Set<Slot>().Where(x => x.Id == slot.Id).FirstOrDefault();
+                
                 slot.IsBusy = false;
-                slot.Types = new List<SlotType>();
 
-
-                db.Slots.Add(slot);
-
-                foreach (var type in types)
+                if (s == null)
                 {
-                    db.Set<Core.Models.SlotType>().Add(
-                    new SlotType()
+                    slot.GenerateId();
+
+                    slot.Types = new List<SlotType>();
+
+                    List<SlotType> aux = new List<SlotType>();
+
+                    foreach (var type in types)
                     {
-                        TypeId = type.Id,
-                        SlotId = slot.Id
-                    });
+                        aux.Add(
+                            new SlotType()
+                            {
+                                TypeId = type.Id,
+                                SlotId = slot.Id
+                            });
+                    }
+
+                    slot.Types = aux;
+
+                    db.Slots.Add(slot);
+
+
+                }
+                else
+                {
+                    s.Name = slot.Name;
+
+                    if(s.Types != null)
+                    {
+                        s.Types = slot.Types;
+                    }
                 }
 
                 await db.SaveChangesAsync();
 
                 return true;
+
             }
             catch (Exception ex)
             {
@@ -87,5 +109,34 @@ namespace Parking.API.Controller
             
         }
 
+        [Route("DeleteSlot")]
+        [HttpDelete]
+        public async Task DeleteSlotAsync([FromQuery] string slotId)
+        {
+            try
+            {
+                var p = db.Set<Slot>().Where(x => x.Id == slotId).FirstOrDefault();
+
+                if (p == null)
+                {
+                    throw new Exception("Vaga não encontrada no Banco.");
+                }
+
+
+                var a = db.Set<ParkedCar>().Where(x => x.Slot.Id == p.Id).AsNoTracking().FirstOrDefault();
+
+                if (a != null)
+                {
+                    throw new Exception("Não foi possivel deletar esta vaga. Existe um veículo alocado nessa vaga.");
+                }
+
+                db.Slots.Remove(p);
+                
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
+        }
     }
 }

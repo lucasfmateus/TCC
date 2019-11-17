@@ -26,6 +26,7 @@ namespace UI
 
         public void ConfigureServices(IServiceCollection services)
         {
+            //Injecao de Dependencia das pages, Services e Controllers
             services.AddRazorPages();
             services.AddSingleton<ServiceBase>();
             services.AddSingleton<ParkedController>();
