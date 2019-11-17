@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Core.Models
 {
+    //Mapeamento da Classe Slot pra retornar o Tipo do carro 
     public class SlotDTO
     {
         public List<TypesDTO> Types { get; set; }
