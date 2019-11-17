@@ -16,6 +16,7 @@ namespace Parking.API
     public class ParkingApiService
     {
         public IConfiguration Configuration { get; }
+
         public ParkingApiService(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -48,13 +49,16 @@ namespace Parking.API
             services.AddSingleton<ParkedService>();
 
         }
+
         public void Configure(IApplicationBuilder app)
         {            
             app.UseSwagger();
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Parking API");
             });
+
             app.UseAuthentication();
 
             app.UseMvc();

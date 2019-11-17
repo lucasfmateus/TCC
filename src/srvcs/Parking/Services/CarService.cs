@@ -20,64 +20,132 @@ namespace Parking.API.Services
 
         public async Task<bool> RegisterNewCar(Car car)
         {
-            var m = db.Set<Model>().Where(x => x.Id == car.Model.Id).FirstOrDefault();
-
-            var t = db.Set<Core.Models.Type>().Where(x => x.Id == car.Type.Id).FirstOrDefault();
-
-            var n = db.Set<Car>().Where(x => x.Model.Name == car.Model.Name && x.Type.Name == car.Type.Name).FirstOrDefault();
-
-            if (n != null)
+            try
             {
-                return false;
-            }
+                var m = db.Set<Model>().Where(x => x.Id == car.Model.Id).FirstOrDefault();
 
-            if (m == null || t == null)
-            {
-                return false;
-            }
+                var t = db.Set<Core.Models.Type>().Where(x => x.Id == car.Type.Id).FirstOrDefault();
 
-            car.Folder = await AddressFolderByIdAsync(car);
+                var c = db.Set<Car>().Where(x => x.Id == car.Id).FirstOrDefault();
 
-            db.Cars.Add(car);
+                if (m == null || t == null)
+                {
+                    return false;
+                }
 
-            await db.SaveChangesAsync();
+                if (c != null)
+                {
+                    if (car.Model != null)
+                    {
+                        c.Model = car.Model;
+                    }
 
-            return true;
+                    if (car.Type != null)
+                    {
+                        c.Type = car.Type;
+                    }
+                }
+                else
+                {
+                    db.Cars.Add(car);
+                }
 
-        }
+                car.Folder = await AddressFolderByIdAsync(car);
 
-        public async Task<bool> RegisterNewModel(Model model)
-        {
-
-            var m = db.Set<Manufacturer>().Where(x => x.Id == model.Manufacturer.Id).AsNoTracking().FirstOrDefault();
-            var n = db.Set<Manufacturer>().Where(x => x.Name == model.Manufacturer.Name).AsNoTracking().FirstOrDefault();
-
-            if (m == null && n != null)
-            {
-                return false;
-            }
-
-            db.Models.Add(model);
-            await db.SaveChangesAsync();
-
-            return true;
-
-        }
-
-        public async Task<bool> RegisterNewType(Core.Models.Type type)
-        {
-            var name = type.Name;
-            var m = db.Set<Core.Models.Type>().Where(x => x.Name == name).FirstOrDefault();
-
-            if (m == null)
-            {
-                db.Types.Add(type);
                 await db.SaveChangesAsync();
 
                 return true;
             }
+            catch (Exception)
+            {
 
-            return false;
+                return false;
+            }
+
+
+        }
+
+        public async Task<bool> RegisterOrUpdateNewModel(Model model)
+        {
+            try
+            {
+                var m = db.Set<Manufacturer>().Where(x => x.Id == model.Manufacturer.Id).FirstOrDefault();
+
+                var p = db.Set<Model>().Where(x => x.Id == model.Id).FirstOrDefault();
+
+                if (m == null)
+                {
+                    return false;
+                }
+
+                if (p != null)
+                {
+                    p = model;
+                }
+                else
+                {
+                    db.Models.Add(model);
+                }
+
+                await db.SaveChangesAsync();
+
+                return true;
+            }
+            catch(Exception) 
+            {
+                return false;
+            }
+            
+        }
+
+        public async Task<bool> RegisterOrUpdateNewManufacturer(Manufacturer manufacturer)
+        {
+            
+            var m = db.Set<Manufacturer>().Where(x => x.Id == manufacturer.Id).FirstOrDefault();
+
+            if(m == null)
+            {
+                db.Manufacturers.Add(manufacturer);
+
+            }
+            else
+            {
+                m.Name = manufacturer.Name;
+            }
+
+            await db.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> RegisterOrUpdateNewType(Core.Models.Type type)
+        {
+            try
+            {
+                var m = db.Set<Core.Models.Type>().Where(x => x.Id == type.Id).FirstOrDefault();
+
+                if (m == null)
+                {
+                    db.Types.Add(type);
+                }
+                else
+                {
+                    if (type.Name != null)
+                    {
+                        m.Name = type.Name;
+                    }
+                }
+
+                await db.SaveChangesAsync();
+
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
         }
 
         public async Task<List<string>> AddressFolderAsync()

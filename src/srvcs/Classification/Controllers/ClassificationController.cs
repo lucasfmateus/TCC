@@ -26,9 +26,9 @@ namespace Classification.Controllers
 
         [Route("Train/")]
         [HttpGet]
-        public async void Train()
+        public async Task Train()
         {
-            classificationService.TrainAsync();
+            await classificationService.TrainAsync();
         }
 
         [Route("Classificate/")]

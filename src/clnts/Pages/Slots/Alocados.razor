@@ -11,7 +11,7 @@
 
         @if (CarsParked == null)
         {
-            <p><em>Loading...</em></p>
+            <p><em>@messageCar</em></p>
         }
         else
         {
@@ -54,7 +54,7 @@
 
         @if (FreeSlots == null)
         {
-            <p><em>Loading...</em></p>
+            <p><em>@messageSlot</em></p>
         }
         else
         {
@@ -109,14 +109,25 @@
 @code {
 
     List<ParkedCar> CarsParked;
-    List<Car>RegisteredCars;
-    ParkedCar CarsParkedById;
     List<Slot> FreeSlots;
+
+    string messageSlot = "Loading ...";
+    string messageCar = "Loading ...";
 
     protected override async Task OnInitializedAsync()
     {
-        RegisteredCars = await carService.GetAllCarsAsync();
         CarsParked = await parkingService.GetParkedCarsAsync();
         FreeSlots = await slotService.GetFreeSlotsAsync();
+
+        if (CarsParked == null)
+        {
+            messageSlot = "Nenhuma vaga vazia encontrada.";
+        }
+
+        if (FreeSlots == null)
+        {
+            messageCar = "Nenhum Carro estacionado foi encontrado.";
+        }
+
     }
 }

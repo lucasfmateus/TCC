@@ -27,7 +27,7 @@
         </div>
 
         <div class="col">
-            @if (registred == null)
+            @if (registred.Key == null)
             {
 
             }
@@ -35,7 +35,7 @@
             {
                 <p>
                     <label>Fabricante: </label>
-                    <label>@registred.Model.Manufacturer.Name</label>
+                    <label>@registred.Key.Model.Manufacturer.Name</label>
                 </p>
 
                 <p>
@@ -109,7 +109,7 @@
     {
         if (registred.Key.Model != null && registred.Key.Type != null)
         {
-            var x = await parkingService.NewParkedAsync(registred.);
+            var x = await parkingService.NewParkedAsync(registred.Key);
 
             if (x != null)
             {

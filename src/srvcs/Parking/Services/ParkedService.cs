@@ -33,10 +33,22 @@ namespace Parking.API.Services
                             .Include(x => x.Slot)
                             .Include(x => x.Type)
                             .OrderBy(x => x.Slot.DistDoor)
-                            .Where(t => t.Type.Name == car.Type.Name && t.Slot.IsBusy == false)
+                            .Where(t => t.Type.Name == car.Type.Name && t.Slot.IsBusy == false && t.Slot.Types.Count() == 1)
                             .FirstOrDefault();
 
-                var v = p?.Slot;
+                var v = p?.Slot;      
+                
+                if(v == null)
+                {
+                    p = db.Set<SlotType>()
+                        .Include(x => x.Slot)
+                        .Include(x => x.Type)
+                        .OrderBy(x => x.Slot.DistDoor)
+                        .Where(t => t.Type.Name == car.Type.Name && t.Slot.IsBusy == false)
+                        .FirstOrDefault();
+                }
+
+                v = p?.Slot;
 
                 if (c == null || v == null)
                 {

@@ -20,11 +20,6 @@ namespace UI.Service.Controller
                 return await request.Content.ReadAsAsync<KeyValuePair<Car, decimal>>();
 
             }
-            catch (Exception)
-            {
-
-                return null;
-            }
             finally
             {
                 ClassificationClientReset();

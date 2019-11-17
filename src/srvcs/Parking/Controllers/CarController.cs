@@ -107,6 +107,7 @@ namespace Parking.API.Controller
         public Manufacturer GetManufacturesByName([FromQuery] string name)
         {
             var p = db.Manufacturers.Where(x => x.Name == name).FirstOrDefault();
+
             return p;
         }
 
@@ -125,21 +126,22 @@ namespace Parking.API.Controller
         public Model GetModelById([FromQuery] string name)
         {
             var p = db.Models.Where(x => x.Name == name).FirstOrDefault();
+
             return p;
         }
 
         //adiciona uma nova fabricante no banco
         [Route("NewManufacture/")]
         [HttpPost]
-        public async Task<bool> AsyncAddManufacture([FromBody] Manufacturer manufacturer)
+        public async Task<bool> AddOrUpdateManufactureAsync([FromBody] Manufacturer manufacturer)
         {
-            try
+            var x = await service.RegisterOrUpdateNewManufacturer(manufacturer);
+
+            if (x)
             {
-                db.Manufacturers.Add(manufacturer);
-                await db.SaveChangesAsync();
                 return true;
             }
-            catch(Exception)
+            else
             {
                 return false;
             }
@@ -148,9 +150,10 @@ namespace Parking.API.Controller
         //adiciona um novo modelo carro no banco utilizando uma fabricante ja existente
         [Route("NewModel/")]
         [HttpPost]
-        public async Task<bool> AsyncAddModel([FromBody] Model model)
+        public async Task<bool> AddOrUpdateModelAsync([FromBody] Model model)
         {
-            var x = await service.RegisterNewModel(model);
+            var x = await service.RegisterOrUpdateNewModel(model);
+
             if (x)
             {
                 return true;
@@ -164,9 +167,10 @@ namespace Parking.API.Controller
         //adiciona um novo carro no banco utilizando modelos e tipos ja existentes
         [Route("NewCar/")]
         [HttpPost]
-        public async Task<bool> AsyncAddCar([FromBody] Car car)
+        public async Task<bool> AddOrUpdateCarAsync([FromBody] Car car)
         {
             var x = await service.RegisterNewCar(car);
+
             if (x)
             {
                 return true;
@@ -180,9 +184,10 @@ namespace Parking.API.Controller
         //adiciona um novo tipo carro no bancos
         [Route("NewCarType/")]
         [HttpPost]
-        public async Task<bool> AsyncAddType([FromBody] Core.Models.Type type)
+        public async Task<bool> AddOrUpdateTypeAsync([FromBody] Core.Models.Type type)
         {
-            var x = await service.RegisterNewType(type);
+            var x = await service.RegisterOrUpdateNewType(type);
+
             if (x)
             {
                 return true;
@@ -221,6 +226,7 @@ namespace Parking.API.Controller
             catch (Exception)
             {
             }
+
         }
         //Deleta um Modelo do Banco que nao tenha nenhum carro utilizando 
         [Route("DeleteModel")]
@@ -270,6 +276,7 @@ namespace Parking.API.Controller
                 {
                     throw new Exception("Não foi possivel deletar esta fabricante. Existe " + m.Count() + " modelo(s) com essa fabricante.");
                 }
+
                 db.Manufacturers.Remove(p);
                 await db.SaveChangesAsync();
             }

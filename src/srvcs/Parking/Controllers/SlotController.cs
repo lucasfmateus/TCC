@@ -57,29 +57,49 @@ namespace Parking.API.Controller
             try
             {
                 var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().ToList();
-
-                slot.GenerateId();
+                
+                var s = db.Set<Slot>().Where(x => x.Id == slot.Id).FirstOrDefault();
+                
                 slot.IsBusy = false;
-                slot.Types = new List<SlotType>();
-                List<SlotType> aux = new List<SlotType>();
 
-                foreach (var type in types)
+                if (s == null)
                 {
-                    aux.Add(
-                    new SlotType()
+                    slot.GenerateId();
+
+                    slot.Types = new List<SlotType>();
+
+                    List<SlotType> aux = new List<SlotType>();
+
+                    foreach (var type in types)
                     {
-                        TypeId = type.Id,
-                        SlotId = slot.Id
-                    });
+                        aux.Add(
+                            new SlotType()
+                            {
+                                TypeId = type.Id,
+                                SlotId = slot.Id
+                            });
+                    }
+
+                    slot.Types = aux;
+
+                    db.Slots.Add(slot);
+
+
+                }
+                else
+                {
+                    s.Name = slot.Name;
+
+                    if(s.Types != null)
+                    {
+                        s.Types = slot.Types;
+                    }
                 }
 
-                slot.Types = aux;
-
-                db.Slots.Add(slot);
-                
                 await db.SaveChangesAsync();
 
                 return true;
+
             }
             catch (Exception ex)
             {
