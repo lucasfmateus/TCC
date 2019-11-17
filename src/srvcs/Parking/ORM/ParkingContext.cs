@@ -30,10 +30,7 @@ namespace Parking.API.Context
 
         public ParkingContext(DbContextOptions<ParkingContext> options) : base(options)
         {
-            if (!Cars.Any())
-            {
-                InitializeDatabase();
-            }
+            
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -46,7 +43,7 @@ namespace Parking.API.Context
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<SlotType>().HasKey(x => new { x.SlotId, x.TypeId });
-            modelBuilder.HasDefaultSchema(schema);
+            modelBuilder.HasDefaultSchema(schema);           
         }
 
         internal static void ConfigureDBContext(SqlServerDbContextOptionsBuilder obj)
@@ -56,115 +53,197 @@ namespace Parking.API.Context
 
         public void InitializeDatabase()
         {
-            var envDir = Environment.CurrentDirectory;
-
-            string projectDirectory = Directory.GetParent(envDir).Parent.FullName;
-
-            string path = projectDirectory + @"/shrd/Core/Dataset/labelsFile.txt";
-            path = path.Replace(@"\", "/");
-
-            if (System.IO.File.Exists(path))
+            if (!Cars.Any())
             {
-                Console.WriteLine($"Populando database...");
+                var envDir = Environment.CurrentDirectory;
 
-                // Busca as labels e diretórios o arquivo
-                string line;
-                var carList = new List<string>();
+                string projectDirectory = Directory.GetParent(envDir).Parent.FullName;
 
-                using (var file = new System.IO.StreamReader(path))
+                string path = projectDirectory + @"/shrd/Core/Dataset/labelsFile.txt";
+                path = path.Replace(@"\", "/");
+
+                if (System.IO.File.Exists(path))
                 {
-                    while ((line = file.ReadLine()) != null)
+                    Console.WriteLine($"Populando database...");
+
+                    // Busca as labels e diretórios o arquivo
+                    string line;
+
+                    using (var file = new System.IO.StreamReader(path))
                     {
-                        // monta o carro
-
-                        var label = line.Split(',')[0];
-                        var directory = line.Split(',')[1];
-
-                        string[] separator = { "__" };
-
-                        var names = label.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-                        var manufacturerName = names[0];
-                        var modelName = names[1];
-                        var year = names[2];
-                        var typeName = names[3];
-
-                        var manufacturer = Manufacturers.FirstOrDefault(x => x.Name.Equals(manufacturerName));
-
-                        if (manufacturer == null)
+                        while ((line = file.ReadLine()) != null)
                         {
-                            manufacturer = new Manufacturer
+                            // monta o carro
+
+                            var label = line.Split(',')[0];
+                            var directory = line.Split(',')[1];
+
+                            directory = projectDirectory + @"/shrd/Core/Dataset/Train/" + directory;
+                            directory = directory.Replace(@"\", "/");
+
+                            if (!Directory.Exists(directory))
                             {
-                                Name = manufacturerName,
-                                CreateAt = DateTime.Now
-                            };
 
-                            // Salva no banco
-                            Manufacturers.Add(manufacturer);
-                            SaveChanges();
+                            }
 
-                            Console.WriteLine($"Fabricante {manufacturer.Name} adicionado ao banco [{manufacturer.Id}]");
+                            string[] separator = { "__" };
+
+                            var names = label.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                            var manufacturerName = names[0];
+                            var modelName = names[1];
+                            var year = names[2];
+                            var typeName = names[3];
+
+                            var manufacturer = Manufacturers.FirstOrDefault(x => x.Name.Equals(manufacturerName));
+
+                            if (manufacturer == null)
+                            {
+                                manufacturer = new Manufacturer
+                                {
+                                    Name = manufacturerName,
+                                    CreateAt = DateTime.Now
+                                };
+
+                                // Salva no banco
+                                Manufacturers.Add(manufacturer);
+                                SaveChanges();
+
+                                Console.WriteLine($"Fabricante {manufacturer.Name} adicionado ao banco [{manufacturer.Id}]");
+                            }
+
+                            var model = Models.FirstOrDefault(x => x.Name.Equals(modelName) && x.Year.ToString().Equals(year));
+
+                            if (model == null)
+                            {
+                                model = new Model
+                                {
+                                    Manufacturer = manufacturer,
+                                    Name = modelName,
+                                    CreateAt = DateTime.Now,
+                                    Year = Convert.ToInt32(year)
+                                };
+
+                                // Salva no banco
+                                Models.Add(model);
+                                SaveChanges();
+
+                                Console.WriteLine($"Modelo {model.Name} adicionado ao banco [{model.Id}]");
+                            }
+
+                            var type = Types.FirstOrDefault(x => x.Name.ToLower().Equals(typeName.ToLower()));
+
+                            if (type == null)
+                            {
+                                type = new Core.Models.Type
+                                {
+                                    CreateAt = DateTime.Now,
+                                    Name = typeName
+                                };
+
+                                Types.Add(type);
+                                SaveChanges();
+
+                                Console.WriteLine($"Tipo {type.Name} adicionado ao banco [{type.Id}]");
+                            }
+
+                            var car = Cars.FirstOrDefault(x => x.Model.Name.Equals(modelName));
+
+                            if (car == null)
+                            {
+                                car = new Car
+                                {
+                                    Model = model,
+                                    CreateAt = DateTime.Now,
+                                    Type = type,
+                                    Folder = directory
+                                };
+
+                                // Salva no banco
+                                Cars.Add(car);
+                                SaveChanges();
+
+                                Console.WriteLine($"Carro {car.Model.Name} adicionado ao banco [{car.Id}]");
+                            }
                         }
 
-                        var model = Models.FirstOrDefault(x => x.Name.Equals(modelName) && x.Year.ToString().Equals(year));
+                        Console.WriteLine($"Database preenchida.");
+                    }
+                }
 
-                        if (model == null)
+                var parkingFile = projectDirectory + @"/shrd/Core/Dataset/parkingFile.txt";
+
+                if (System.IO.File.Exists(parkingFile))
+                {
+                    Console.WriteLine("Populando estacionamento...");
+
+                    // Busca as labels e diretórios o arquivo
+                    string line;
+                    var carList = new List<string>();
+                    Random gen = new Random();
+
+
+                    using (var file = new System.IO.StreamReader(parkingFile))
+                    {
+                        while ((line = file.ReadLine()) != null)
                         {
-                            model = new Model
+                            // monta o carro
+
+                            var data = line.Split(';');
+
+                            var name = data[0];
+                            var dist = data[1];
+                            var typesData = data[2];
+                            var types = typesData.Split(',');
+
+                            var prob = gen.Next(100);
+                            var busy = prob <= 35;
+
+
+                            var slot = new Slot()
                             {
-                                Manufacturer = manufacturer,
-                                Name = modelName,
                                 CreateAt = DateTime.Now,
-                                Year = Convert.ToInt32(year)
+                                Name = name,
+                                DistDoor = Convert.ToInt32(dist),
+                                IsBusy = busy
                             };
 
-                            // Salva no banco
-                            Models.Add(model);
+                            Slots.Add(slot);
                             SaveChanges();
 
-                            Console.WriteLine($"Modelo {model.Name} adicionado ao banco [{model.Id}]");
-                        }
-
-                        var type = Types.FirstOrDefault(x => x.Name.ToLower().Equals(typeName.ToLower()));
-
-                        if (type == null)
-                        {
-                            type = new Core.Models.Type
+                            foreach (var type in types)
                             {
-                                CreateAt = DateTime.Now,
-                                Name = typeName
-                            };
+                                var typeObject = Types.FirstOrDefault(x => x.Name.ToLower().Equals(type.ToLower()));
 
-                            Types.Add(type);
-                            SaveChanges();
+                                var slotType = new SlotType
+                                {
+                                    SlotId = slot.Id,
+                                    TypeId = typeObject.Id
+                                };
 
-                            Console.WriteLine($"Tipo {type.Name} adicionado ao banco [{type.Id}]");
-                        }
+                                SlotTypes.Add(slotType);
+                            }
 
-                        var car = Cars.FirstOrDefault(x => x.Model.Name.Equals(modelName));
-
-                        if (car == null)
-                        {
-                            car = new Car
+                            if (busy)
                             {
-                                Model = model,
-                                CreateAt = DateTime.Now,
-                                Type = type,
-                                Folder = directory
-                            };
+                                var type = Types.FirstOrDefault(x => x.Name.Equals(types.First()));
+                                var car = Cars.FirstOrDefault(x => x.Type.Name.Equals(type.Name));
 
-                            // Salva no banco
-                            Cars.Add(car);
+                                Parked.Add(new ParkedCar
+                                {
+                                    Slot = slot,
+                                    Car = car,
+                                    CreateAt = DateTime.Now
+                                });
+                            }
+
                             SaveChanges();
-
-                            Console.WriteLine($"Carro {car.Model.Name} adicionado ao banco [{car.Id}]");
                         }
                     }
 
-                    Console.WriteLine($"Database preenchida.");
+                    Console.WriteLine("Estacionamento populado.");
                 }
             }
         }
-
     }
     public class ParkingContextDesignTimeFactory : IDesignTimeDbContextFactory<ParkingContext>
     {

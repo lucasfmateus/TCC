@@ -19,8 +19,6 @@ namespace Parking.API.Context
                 context.Database.Migrate();
             }
 
-    
-
             return webHost;
         }
     }

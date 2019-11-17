@@ -11,11 +11,11 @@ namespace UI.Service.Controller
     public class ClassificationController : ServiceBase
     {
 
-        public async Task<KeyValuePair<Car, decimal>> GetCassification(string folder)
+        public async Task<KeyValuePair<Car, decimal>> GetCassification(string image)
         {
             try
             {
-                var request = await classificationClient.GetAsync("Car/GetModelByName?folder=" + folder);
+                var request = await classificationClient.GetAsync("Classification/Classificate?image=" + image);
 
                 return await request.Content.ReadAsAsync<KeyValuePair<Car, decimal>>();
 
