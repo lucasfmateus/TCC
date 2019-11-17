@@ -60,25 +60,25 @@ namespace Classification.Services
         /// </summary>
         /// <param name="image">Diretório da imagem</param>
         /// <returns></returns>
-        public async Task<KeyValuePair<Car, decimal>> ClassificateAsync(string image) // TODO: mudar envio para imagem em base 64
+        public async Task<Car> ClassificateAsync(string image) // TODO: mudar envio para imagem em base 64
         {
             try
             {
-                var request = "http://127.0.0.1:5000/"
+                var request = "http://127.0.0.1:5000"
                     .AppendPathSegment("api/classify")
                     .WithTimeout(TimeSpan.FromSeconds(5));
 
                 var response = await request
-                    .PostJsonAsync(image);
+                    .PostJsonAsync(image)
+                    .ReceiveString();
                     //.PostMultipartAsync(mp => mp
                     //    .AddFile("FilePath", imageDirectory));
 
-                var result = JsonConvert.DeserializeObject<KeyValuePair<string, decimal>>(await response.Content.ReadAsStringAsync());
+                //var result = JsonConvert.DeserializeObject<string>(await response.Content.ReadAsStringAsync());
 
                 string[] separator = { "__" };
-                var names = result.Key.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                var names = response.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-                var accuracy = result.Value;
                 var manufacturerName = names[0].ToUpper();
                 var modelName = names[1].ToUpper();
                 var year = names[2];
@@ -94,38 +94,8 @@ namespace Classification.Services
                 {
                     throw new Exception("Veículo não encontrado na base de dados do sistema.");
                 }
-                else if (result.Value < 70)
-                {
-                    throw new Exception($"Veículo não reconhecido (certeza: {result.Value}).");
-                }
 
-                return new  KeyValuePair<Car, decimal>(car, accuracy);
-
-                //return new Car
-                //{
-                //    Id = "77",
-                //    CreateAt = DateTimeOffset.Now,
-                //    Model = new Model
-                //    {
-                //        Name = "Fusquinha",
-                //        Id = "77",
-                //        CreateAt = DateTimeOffset.Now,
-                //        Year = 2019,
-                //        Manufacturer = new Manufacturer
-                //        {
-                //            CreateAt = DateTime.Now,
-                //            Id = "77",
-                //            Name = "Volks"
-                //        },
-
-                //    },
-                //    Type = new Core.Models.Type
-                //    {
-                //        Id = "77",
-                //        CreateAt = DateTimeOffset.Now,
-                //        Name = "Sport"
-                //    }
-                //};
+                return car;
             }
             catch(Exception ex)
             {
