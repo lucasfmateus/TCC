@@ -34,11 +34,11 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<Car> GetAllCar()
         {
-            var p = db.Cars.Include(x => x.Model)
+            var cars = db.Cars.Include(x => x.Model)
                            .Include(x => x.Model.Manufacturer)
                            .Include(x => x.Type)
                            .ToList();
-            return p;
+            return cars;
         }
 
 
@@ -54,12 +54,12 @@ namespace Parking.API.Controller
         [HttpGet]
         public Car GetCarById([FromQuery]string id)
         {
-            var p = db.Cars.Include(x => x.Model)
+            var car = db.Cars.Include(x => x.Model)
                .Include(x => x.Type)
                .Where(x => x.Id == id)
                .FirstOrDefault();
 
-            return p;
+            return car;
         }
 
         //retorna todos os modelos registrados no banco
@@ -67,9 +67,9 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<Model> GetAllModels()
         {
-            var p = db.Models.Include(x => x.Manufacturer)
+            var models = db.Models.Include(x => x.Manufacturer)
                              .ToList();
-            return p;
+            return models;
         }
 
         //retorna o modelo, sendo passado o nome como parametro 
@@ -77,10 +77,10 @@ namespace Parking.API.Controller
         [HttpGet]
         public Model GetModelsByName([FromQuery]string name)
         {
-            var p = db.Models.Include(x => x.Manufacturer)
+            var model = db.Models.Include(x => x.Manufacturer)
                              .Where(x => x.Name == name)
                              .FirstOrDefault();
-            return p;
+            return model;
         }
 
         //retorna todas as fabricantes registradas do banco 
@@ -88,8 +88,8 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<Manufacturer> GetAllManufactures()
         {
-            var p = db.Manufacturers.ToList();
-            return p;
+            var manufacturers = db.Manufacturers.ToList();
+            return manufacturers;
         }
 
         //retorna todos os tipos registrados do banco 
@@ -97,8 +97,8 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<Core.Models.Type> GetAllTypes()
         {
-            var p = db.Types.ToList();
-            return p;
+            var types = db.Types.ToList();
+            return types;
         }
 
         //retorna a fabricante, sendo passado o nome como parametro 
@@ -106,9 +106,9 @@ namespace Parking.API.Controller
         [HttpGet]
         public Manufacturer GetManufacturesByName([FromQuery] string name)
         {
-            var p = db.Manufacturers.Where(x => x.Name == name).FirstOrDefault();
+            var manufacturer = db.Manufacturers.Where(x => x.Name == name).FirstOrDefault();
 
-            return p;
+            return manufacturer;
         }
 
         //retorna o tipo, sendo passado o nome como parametro 
@@ -116,8 +116,8 @@ namespace Parking.API.Controller
         [HttpGet]
         public Core.Models.Type GetTypeByName([FromQuery] string name)
         {
-            var p = db.Types.Where(x => x.Name == name).FirstOrDefault();
-            return p;
+            var type = db.Types.Where(x => x.Name == name).FirstOrDefault();
+            return type;
         }
 
         //retorna o tipo, sendo passado o nome como parametro 
@@ -125,8 +125,8 @@ namespace Parking.API.Controller
         [HttpGet]
         public Core.Models.Type GetTypeById([FromQuery] string id)
         {
-            var p = db.Types.Where(x => x.Id == id).FirstOrDefault();
-            return p;
+            var type = db.Types.Where(x => x.Id == id).FirstOrDefault();
+            return type;
         }
 
         //retorna o modelo, sendo passado o nome como parametro 
@@ -134,9 +134,9 @@ namespace Parking.API.Controller
         [HttpGet]
         public Model GetModelById([FromQuery] string name)
         {
-            var p = db.Models.Where(x => x.Name == name).FirstOrDefault();
+            var model = db.Models.Where(x => x.Name == name).FirstOrDefault();
 
-            return p;
+            return model;
         }
 
         //adiciona uma nova fabricante no banco
@@ -144,9 +144,9 @@ namespace Parking.API.Controller
         [HttpPost]
         public async Task<bool> AddOrUpdateManufactureAsync([FromBody] Manufacturer manufacturer)
         {
-            var x = await service.RegisterOrUpdateNewManufacturer(manufacturer);
+            var result = await service.RegisterOrUpdateNewManufacturer(manufacturer);
 
-            if (x)
+            if (result)
             {
                 return true;
             }
@@ -161,9 +161,9 @@ namespace Parking.API.Controller
         [HttpPost]
         public async Task<bool> AddOrUpdateModelAsync([FromBody] Model model)
         {
-            var x = await service.RegisterOrUpdateNewModel(model);
+            var result = await service.RegisterOrUpdateNewModel(model);
 
-            if (x)
+            if (result)
             {
                 return true;
             }
@@ -178,9 +178,9 @@ namespace Parking.API.Controller
         [HttpPost]
         public async Task<bool> AddOrUpdateCarAsync([FromBody] Car car)
         {
-            var x = await service.RegisterNewCar(car);
+            var result = await service.RegisterNewCar(car);
 
-            if (x)
+            if (result)
             {
                 return true;
             }
@@ -195,9 +195,9 @@ namespace Parking.API.Controller
         [HttpPost]
         public async Task<bool> AddOrUpdateTypeAsync([FromBody] Core.Models.Type type)
         {
-            var x = await service.RegisterOrUpdateNewType(type);
+            var result = await service.RegisterOrUpdateNewType(type);
 
-            if (x)
+            if (result)
             {
                 return true;
             }
@@ -214,21 +214,21 @@ namespace Parking.API.Controller
         {
             try
             {
-                var c = db.Set<Car>().Where(x => x.Id == carId).FirstOrDefault();
+                var car = db.Set<Car>().Where(x => x.Id == carId).FirstOrDefault();
 
-                if(c == null)
+                if(car == null)
                 {
                     throw new Exception("Carro não encontrado no Banco.");
                 }
                 
-                var p = db.Set<ParkedCar>().Where(x => x.Car.Id == c.Id).AsNoTracking().ToList();
+                var parkedCar = db.Set<ParkedCar>().Where(x => x.Car.Id == car.Id).AsNoTracking().ToList();
 
-                if (p != null)
+                if (parkedCar != null)
                 {
                     throw new Exception("Já possuiu um registro desse carro estacionado.");
                 }
 
-                db.Cars.Remove(c);
+                db.Cars.Remove(car);
                 
                 await db.SaveChangesAsync();
             }
@@ -244,21 +244,21 @@ namespace Parking.API.Controller
         {
             try
             {
-                var p = db.Set<Model>().Where(x => x.Id == modelId).FirstOrDefault();
+                var model = db.Set<Model>().Where(x => x.Id == modelId).FirstOrDefault();
 
-                if (p == null)
+                if (model == null)
                 {
                     throw new Exception("Modelo não encontrado no Banco.");
                 }
 
-                var c = db.Set<Car>().Where(x => x.Model.Id == p.Id).AsNoTracking().ToList();
+                var cars = db.Set<Car>().Where(x => x.Model.Id == model.Id).AsNoTracking().ToList();
 
-                if(c != null)
+                if(cars != null)
                 {
-                    throw new Exception("Não foi possivel deletar este modelo. Existe " + c.Count() + " veículo(s) com esse modelo.");
+                    throw new Exception("Não foi possivel deletar este modelo. Existe " + cars.Count() + " veículo(s) com esse modelo.");
                 }
 
-                db.Models.Remove(p);
+                db.Models.Remove(model);
                 await db.SaveChangesAsync();
             }
             catch (Exception)
@@ -272,21 +272,21 @@ namespace Parking.API.Controller
         {
             try
             {
-                var p = db.Set<Manufacturer>().Where(x => x.Id == manufactureId).FirstOrDefault();
+                var manufacturer = db.Set<Manufacturer>().Where(x => x.Id == manufactureId).FirstOrDefault();
 
-                if (p == null)
+                if (manufacturer == null)
                 {
                     throw new Exception("Fabricante não encontrada no Banco.");
                 }
 
-                var m = db.Set<Model>().Where(x => x.Manufacturer.Id == manufactureId).AsNoTracking().ToList();
+                var models = db.Set<Model>().Where(x => x.Manufacturer.Id == manufactureId).AsNoTracking().ToList();
 
-                if (m != null)
+                if (models != null)
                 {
-                    throw new Exception("Não foi possivel deletar esta fabricante. Existe " + m.Count() + " modelo(s) com essa fabricante.");
+                    throw new Exception("Não foi possivel deletar esta fabricante. Existe " + models.Count() + " modelo(s) com essa fabricante.");
                 }
 
-                db.Manufacturers.Remove(p);
+                db.Manufacturers.Remove(manufacturer);
                 await db.SaveChangesAsync();
             }
             catch (Exception)
@@ -301,28 +301,28 @@ namespace Parking.API.Controller
         {
             try
             {
-                var p = db.Set<Core.Models.Type>().Where(x => x.Id == typeId).FirstOrDefault();
+                var type = db.Set<Core.Models.Type>().Where(x => x.Id == typeId).FirstOrDefault();
 
-                if (p == null)
+                if (type == null)
                 {
                     throw new Exception("Tipo não encontrado no Banco.");
                 }
 
-                var c = db.Set<Car>().Where(x => x.Type.Id == p.Id).AsNoTracking().ToList();
+                var cars = db.Set<Car>().Where(x => x.Type.Id == type.Id).AsNoTracking().ToList();
 
-                if (c != null)
+                if (cars != null)
                 {
-                    throw new Exception("Não foi possivel deletar este tipo. Existe " + c.Count() + " veículo(s) com esse tipo.");
+                    throw new Exception("Não foi possivel deletar este tipo. Existe " + cars.Count() + " veículo(s) com esse tipo.");
                 }
 
-                var s = db.Set<SlotType>().Where(x => x.TypeId == typeId).AsNoTracking().ToList();
+                var slots = db.Set<SlotType>().Where(x => x.TypeId == typeId).AsNoTracking().ToList();
 
-                if (s != null)
+                if (slots != null)
                 {
-                    throw new Exception("Não foi possivel deletar este tipo. Existe " + c.Count() + " Slots(s) com esse tipo.");
+                    throw new Exception("Não foi possivel deletar este tipo. Existe " + cars.Count() + " Slots(s) com esse tipo.");
                 }
 
-                db.Types.Remove(p);
+                db.Types.Remove(type);
                 await db.SaveChangesAsync();
             }
             catch (Exception)

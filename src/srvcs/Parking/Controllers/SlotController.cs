@@ -23,24 +23,41 @@ namespace Parking.API.Controller
 
         [Route("GetSlots/")]
         [HttpGet]
-        public List<Slot> GetAllSlots()
+        public List<SlotDTO> GetAllSlots()
         {
-            var p = db.Slots.Include(x => x.Types)
+            var slots = db.Slots.Include(x => x.Types)
                             .ToList();
 
-            return p;
+            List<SlotDTO> slotsDto = new List<SlotDTO>();
+
+            foreach (var item in slots)
+            {
+                foreach (var x in item.Types)
+                {
+                    x.Type = db.Types.Where(y => y.Id == x.TypeId).FirstOrDefault();
+                }
+            }
+            foreach (var item in slots)
+            {
+                slotsDto.Add(
+                        new SlotDTO(item)
+                    );
+            }
+
+            return slotsDto;
         }
 
         [Route("GetFreeSlots/")]
         [HttpGet]
-        public List<Slot> GetFreeSlots()
+        public List<SlotDTO> GetFreeSlots()
         {
-            var p = db.Slots.Include(x => x.Types)
+            var freeSlots = db.Slots.Include(x => x.Types)
                             .Where(x => !x.IsBusy)
-                            .AsNoTracking()
                             .ToList();
 
-            foreach (var item in p)
+            List<SlotDTO> freeSlotsDto = new List<SlotDTO>();
+
+            foreach (var item in freeSlots)
             {
                 foreach (var x in item.Types)
                 {
@@ -48,21 +65,30 @@ namespace Parking.API.Controller
                 }
             }
 
-            return p;
+            foreach (var item in freeSlots)
+            {
+                freeSlotsDto.Add(
+                        new SlotDTO(item)
+                    ); 
+            }
+
+            return freeSlotsDto;
         }
 
         [Route("GetSlotById/")]
         [HttpGet]
         public Slot GetSlotById([FromQuery]string id)
         {
-            var p = db.Slots.Include(x => x.Types)
+            var slot = db.Slots.Include(x => x.Types)
                             .Where(x => x.Id == id)
                             .FirstOrDefault();
-            return p;
+            return slot;
         }
 
         [Route("NewSlot")]
         [HttpPost]
+        //Adiciona uma nova vaga ao banco, que contém uma lista de N tipos de carro compatíveis.
+        //O mapeamento é feito através de uma tabela que possui como chave primária uma relação do Id do tipo com o Id do Slot
         public async Task<bool> AddSlotAsync([FromBody] Slot slot)
         { 
             
@@ -70,21 +96,21 @@ namespace Parking.API.Controller
             {
                 var types = db.Set<Core.Models.Type>().Where(x => slot.Types.Select(y => y.TypeId).Contains(x.Id)).AsNoTracking().ToList();
                 
-                var s = db.Set<Slot>().Where(x => x.Id == slot.Id).FirstOrDefault();
+                var slots = db.Set<Slot>().Where(x => x.Id == slot.Id).FirstOrDefault();
                 
                 slot.IsBusy = false;
 
-                if (s == null)
+                if (slots == null)
                 {
                     slot.GenerateId();
 
                     slot.Types = new List<SlotType>();
 
-                    List<SlotType> aux = new List<SlotType>();
+                    List<SlotType> auxList = new List<SlotType>();
 
                     foreach (var type in types)
                     {
-                        aux.Add(
+                        auxList.Add(
                             new SlotType()
                             {
                                 TypeId = type.Id,
@@ -92,7 +118,7 @@ namespace Parking.API.Controller
                             });
                     }
 
-                    slot.Types = aux;
+                    slot.Types = auxList;
 
                     db.Slots.Add(slot);
 
@@ -100,11 +126,11 @@ namespace Parking.API.Controller
                 }
                 else
                 {
-                    s.Name = slot.Name;
+                    slots.Name = slot.Name;
 
-                    if(s.Types != null)
+                    if(slots.Types != null)
                     {
-                        s.Types = slot.Types;
+                        slots.Types = slot.Types;
                     }
                 }
 
@@ -127,22 +153,22 @@ namespace Parking.API.Controller
         {
             try
             {
-                var p = db.Set<Slot>().Where(x => x.Id == slotId).FirstOrDefault();
+                var slot = db.Set<Slot>().Where(x => x.Id == slotId).FirstOrDefault();
 
-                if (p == null)
+                if (slot == null)
                 {
                     throw new Exception("Vaga não encontrada no Banco.");
                 }
 
 
-                var a = db.Set<ParkedCar>().Where(x => x.Slot.Id == p.Id).AsNoTracking().FirstOrDefault();
+                var alocated = db.Set<ParkedCar>().Where(x => x.Slot.Id == slot.Id).AsNoTracking().FirstOrDefault();
 
-                if (a != null)
+                if (alocated != null)
                 {
                     throw new Exception("Não foi possivel deletar esta vaga. Existe um veículo alocado nessa vaga.");
                 }
 
-                db.Slots.Remove(p);
+                db.Slots.Remove(slot);
                 
                 await db.SaveChangesAsync();
             }

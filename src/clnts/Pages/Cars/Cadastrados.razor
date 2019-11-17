@@ -64,9 +64,9 @@
                 <thead>
 
                     <tr>
-                        <th>Id</th>
-                        <th>Nome</th>
-                        <th>Distâcia da Porta</th>
+                        <th style="max-width: 100px">Id</th>
+                        <th style="max-width: 100px">Nome</th>
+                        <th style="max-width: 100px">Distâcia da Porta</th>
                         <th>Categorias</th>
                         <th>Ocupada</th>
                     </tr>
@@ -78,7 +78,7 @@
                     @foreach (var item in Slots)
                     {
                         <tr>
-                            <td>@item.Id</td>
+                            <td style="max-width: 150px">@item.Id</td>
                             <td>@item.Name</td>
                             <td>@item.DistDoor</td>
 
@@ -88,10 +88,12 @@
                             }
                             else
                             {
-                                @foreach (var p in item.Types)
-                                {
-                                    <td>@p.Type.Name</td>
-                                }
+                                <td>
+                                    @foreach (var x in item.Types)
+                                    {
+                                        <label>@x.Name ,<br/></label>
+                                    }
+                                </td>
                             }
 
                             <td>@item.IsBusy</td>
@@ -111,7 +113,7 @@
 @code {
 
     List<Car> RegisteredCars;
-    List<Slot> Slots;
+    List<SlotDTO> Slots;
 
     string messageCar = "Loading ...";
     string messageSlot = "Loading ...";

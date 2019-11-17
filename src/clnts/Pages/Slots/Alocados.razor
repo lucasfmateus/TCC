@@ -75,24 +75,26 @@
 
                     @foreach (var item in FreeSlots)
                     {
-                        <tr>
-                            <td>@item.Id</td>
-                            <td>@item.Name</td>
-                            <td>@item.DistDoor</td>
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.DistDoor</td>
 
-                            @if (item.Types == null)
-                            {
-                                <td>Carregando...</td>
-                            }
-                            else
-                            {
-                                @foreach (var p in item.Types)
+                        @if (item.Types == null)
+                        {
+                            <td>Carregando...</td>
+                        }
+                        else
+                        {
+                            <td>
+                                @foreach (var x in item.Types)
                                 {
-                                    <td>@p.Type.Name</td>
+                                    <label>@x.Name<br /></label>
                                 }
-                            }
+                            </td>
+                        }
 
-                        </tr>
+                    </tr>
                     }
 
                 </tbody>
@@ -109,7 +111,7 @@
 @code {
 
     List<ParkedCar> CarsParked;
-    List<Slot> FreeSlots;
+    List<SlotDTO> FreeSlots;
 
     string messageSlot = "Loading ...";
     string messageCar = "Loading ...";
