@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Parking.API.Context;
+using System.IO;
 
 namespace Parking.API.Services
 {
@@ -89,6 +90,5 @@ namespace Parking.API.Services
 
             return address;
         }
-
     }
 }

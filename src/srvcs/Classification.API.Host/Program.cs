@@ -17,7 +17,7 @@ namespace Classification.API.Host
 
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:5002")
+                .UseUrls("http://*:5003")
                 .UseStartup<ClassificationApiService>();        
     }
 }

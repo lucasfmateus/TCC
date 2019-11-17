@@ -23,6 +23,7 @@ namespace UI
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseUrls("https://*:65503");
                 });
     }
 }

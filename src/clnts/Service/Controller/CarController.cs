@@ -18,8 +18,7 @@ namespace UI.Service.Controller
             {
                 var request = await client.GetAsync("Car/GetAdress");
 
-                return await request.Content.ReadAsAsync<List<string>>();
-
+                return await request.Content.ReadAsAsync<List<string>>(); 
             }
             catch (Exception)
             {

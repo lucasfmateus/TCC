@@ -23,13 +23,13 @@ namespace UI.Service.Base
         public void ParkingClientReset()
         {
             client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:5001/api/");
+            client.BaseAddress = new Uri("http://localhost:5002/api/");
         }
 
         public void ClassificationClientReset()
         {
             classificationClient = new HttpClient();
-            classificationClient.BaseAddress = new Uri("http://localhost:5002/api/");
+            classificationClient.BaseAddress = new Uri("http://localhost:5003/api/");
         }
 
     }

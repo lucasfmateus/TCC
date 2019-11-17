@@ -16,11 +16,13 @@ namespace ParkingAPI
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().MigrateDatabase<ParkingContext>().Run();
+
+
         }
 
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://*:5001")
+                .UseUrls("http://*:5002")
                 .UseStartup<ParkingApiService>();
     }
 }
