@@ -43,6 +43,10 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
         public async Task<Slot> NewSlotAsync(Slot slot)
@@ -63,6 +67,10 @@ namespace UI.Service.Controller
                 catch (Exception)
                 {
                     return null;
+                }
+                finally
+                {
+                    ParkingClientReset();
                 }
             }
 

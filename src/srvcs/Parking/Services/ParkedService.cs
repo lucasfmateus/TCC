@@ -67,7 +67,9 @@ namespace Parking.API.Services
 
                 await db.SaveChangesAsync();
 
-                return slot;
+                var slotResult = new SlotDTO(slot);
+
+                return slotResult;
 
             }
             catch (Exception ex)
