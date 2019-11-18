@@ -22,37 +22,45 @@ namespace Classification.Services
             this.db = db;
         }
 
-        public async void InitializeDb()
-        {
-
-        }
-
         /// <summary>
         /// Gera as labels a partir do banco de dados e envia para o treinamento
         /// </summary>
         public async Task<object> TrainAsync(bool retrain = false)
         {
-            var lablelsDict = new Dictionary<string, string>();
-
-            var cars = db.Cars
-                .Include(x => x.Model)
-                    .ThenInclude(x => x.Manufacturer)
-                .ToList();
-
-            foreach (var car in cars.OrderBy(x => x.CreateAt))
+            try
             {
-                var label = $"{car.Model.Manufacturer.Name}__{car.Model.Name}__{car.Model.Year}__{car.Type.Name}";
+                var lablelsDict = new Dictionary<string, string>();
 
-                lablelsDict.Add(label, car.Folder);
+                var cars = db.Cars
+                    .Include(x => x.Type)
+                    .Include(x => x.Model)
+                        .ThenInclude(x => x.Manufacturer)
+                    .ToList();
+
+                foreach (var car in cars.OrderBy(x => x.CreateAt))
+                {
+                    var label = $"{car.Model.Manufacturer.Name}__{car.Model.Name}__{car.Model.Year}__{car.Type.Name}";
+
+                    lablelsDict.Add(label, car.Folder);
+
+                    if(!System.IO.Directory.Exists(car.Folder))
+                    {
+
+                    }
+                }
+
+                var request = "http://127.0.0.1:5000/"
+                    .AppendPathSegment("api/train")
+                    .WithHeader("retrain", retrain);
+
+                await request.PostJsonAsync(lablelsDict);
+
+                return lablelsDict;
             }
-
-            var request = "http://127.0.0.1:5000/"
-                .AppendPathSegment("api/train")
-                .WithHeader("retrain", retrain);
-
-            await request.PostJsonAsync(lablelsDict);
-
-            return lablelsDict;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         /// <summary>

@@ -11,7 +11,6 @@ namespace UI.Service.Controller
 {
     public class ClassificationController : ServiceBase
     {
-
         public async Task<KeyValuePair<Car, decimal>> GetCassification(string image)
         {
             try
@@ -24,7 +23,7 @@ namespace UI.Service.Controller
                     try
                     {
                         var request = await classificationClient.PostAsync("Classification/Classificate", stringContent);
-                        var result = await request.Content.ReadAsStringAsync(); 
+                        var result = await request.Content.ReadAsStringAsync();
                         return await request.Content.ReadAsAsync<KeyValuePair<Car, decimal>>();
                     }
                     finally
@@ -33,7 +32,7 @@ namespace UI.Service.Controller
                     }
                 }
 
-               
+
 
             }
             finally
