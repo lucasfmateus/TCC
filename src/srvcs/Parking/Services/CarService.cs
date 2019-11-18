@@ -23,27 +23,27 @@ namespace Parking.API.Services
         {
             try
             {
-                var m = db.Set<Model>().Where(x => x.Id == car.Model.Id).FirstOrDefault();
+                var model = db.Set<Model>().Where(x => x.Id == car.Model.Id).FirstOrDefault();
 
-                var t = db.Set<Core.Models.Type>().Where(x => x.Id == car.Type.Id).FirstOrDefault();
+                var type = db.Set<Core.Models.Type>().Where(x => x.Id == car.Type.Id).FirstOrDefault();
 
-                var c = db.Set<Car>().Where(x => x.Id == car.Id).FirstOrDefault();
+                var carDb = db.Set<Car>().Where(x => x.Id == car.Id).FirstOrDefault();
 
-                if (m == null || t == null)
+                if (model == null || type == null)
                 {
                     return false;
                 }
 
-                if (c != null)
+                if (carDb != null)
                 {
                     if (car.Model != null)
                     {
-                        c.Model = car.Model;
+                        carDb.Model = car.Model;
                     }
 
                     if (car.Type != null)
                     {
-                        c.Type = car.Type;
+                        carDb.Type = car.Type;
                     }
                 }
                 else

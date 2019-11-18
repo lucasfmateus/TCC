@@ -29,25 +29,25 @@ namespace Parking.API.Controller
         [HttpGet]
         public List<ParkedCar> GetBusySlots()
         {
-            var p = db.Parked.Include(x => x.Slot)
+            var busy = db.Parked.Include(x => x.Slot)
                                 .Include(x => x.Car)
                                 .Include(x => x.Car.Model)
                                 .Include(x => x.Car.Type)
                                 .Include(x => x.Car.Model.Manufacturer)
                                 .Where(x => x.Slot.IsBusy)
                                 .ToList();
-            return p;
+            return busy;
         }
 
         [Route("GetParkedById/")]
         [HttpGet]
         public ParkedCar GetSlotById([FromQuery]string id)
         {
-            var p = db.Parked.Include(x => x.Slot)
+            var parked = db.Parked.Include(x => x.Slot)
                                 .Include(x => x.Car)
                                 .Where(x => x.Id == id)
                                 .FirstOrDefault();
-            return p;
+            return parked;
         }
 
         [Route("NewParked/")]
@@ -55,6 +55,42 @@ namespace Parking.API.Controller
         public async Task<Slot> AsyncNewCarParked([FromBody] Car car)
         {
             return await service.AllocateCar(car);
+        }
+
+        [Route("DeleteParked")]
+        [HttpDelete]
+        public async Task DeleteParkedAsync([FromQuery] string id)
+        {
+            try
+            {
+                var parked = db.Parked.Include(x => x.Slot)
+                                    .Include(x => x.Car)
+                                    .Where(x => x.Id == id)
+                                    .FirstOrDefault();
+
+                if (parked == null)
+                {
+                    throw new Exception("Carro não encontrado no Banco.");
+                }
+
+                var parkedCar = db.Set<ParkedCar>().Where(x => x.Car.Id == car.Id).AsNoTracking().ToList();
+
+                if (parkedCar != null)
+                {
+                    throw new Exception("Já possuiu um registro desse carro estacionado.");
+                }
+
+                db.Parked.Remove(parked);
+
+                var slot = db.Slots.Where(x => x.Id == parked.Slot.Id).FirstOrDefault();
+
+                slot.IsBusy = false;
+
+                await db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+            }
         }
 
     }

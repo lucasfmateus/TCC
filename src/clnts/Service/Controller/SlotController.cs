@@ -11,13 +11,13 @@ namespace UI.Service.Controller
 {
     public class SlotController : ServiceBase
     {
-        public async Task<List<Slot>> GetFreeSlotsAsync()
+        public async Task<List<SlotDTO>> GetFreeSlotsAsync()
         {
             try
             {
                 var request = await client.GetAsync("slot/GetFreeSlots");
 
-                var x = await request.Content.ReadAsAsync<List<Slot>>();
+                var x = await request.Content.ReadAsAsync<List<SlotDTO>>();
 
                 return x;
 
@@ -28,13 +28,13 @@ namespace UI.Service.Controller
             }
         }
 
-        public async Task<List<Slot>> GetAllSlotsAsync()
+        public async Task<List<SlotDTO>> GetAllSlotsAsync()
         {
             try
             {
                 var request = await client.GetAsync("slot/GetSlots");
 
-                var x = await request.Content.ReadAsAsync<List<Slot>>();
+                var x = await request.Content.ReadAsAsync<List<SlotDTO>>();
 
                 return x;
 
