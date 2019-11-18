@@ -36,12 +36,12 @@ namespace UI.Service.Controller
             {
                 try
                 {
-                    var request = await client.PostAsync("parked/NewParked/", stringContent);
+                    var request = await client.PostAsync("parked/NewParked", stringContent);
                     var result = await request.Content.ReadAsStringAsync();
                     return await request.Content.ReadAsAsync<Slot>();
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return null;
                 }

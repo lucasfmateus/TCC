@@ -50,7 +50,7 @@ namespace Parking.API.Controller
             return parked;
         }
 
-        [Route("NewParked/")]
+        [Route("NewParked")]
         [HttpPost]
         public async Task<Slot> AsyncNewCarParked([FromBody] Car car)
         {
