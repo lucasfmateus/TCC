@@ -19,4 +19,10 @@ namespace Core.Models
         public string Folder { get; set; }
     }
 
+    public class ClassificationCar
+    {
+        public Car Car { get; set; }
+        public decimal Accuracy { get; set; }
+    }
+
 }

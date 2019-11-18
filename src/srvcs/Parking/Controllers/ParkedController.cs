@@ -73,7 +73,7 @@ namespace Parking.API.Controller
                     throw new Exception("Carro não encontrado no Banco.");
                 }
 
-                var parkedCar = db.Set<ParkedCar>().Where(x => x.Car.Id == car.Id).AsNoTracking().ToList();
+                var parkedCar = db.Set<ParkedCar>().Where(x => x.Car.Id == parked.Car.Id).AsNoTracking().ToList();
 
                 if (parkedCar != null)
                 {

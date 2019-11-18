@@ -12,7 +12,7 @@ namespace UI.Service.Controller
     public class ClassificationController : ServiceBase
     {
 
-        public async Task<Car> GetCassification(string image)
+        public async Task<ClassificationCar> GetCassification(string image)
         {
             try
             {
@@ -25,16 +25,13 @@ namespace UI.Service.Controller
                     {
                         var request = await classificationClient.PostAsync("Classification/Classificate", stringContent);
                         var result = await request.Content.ReadAsStringAsync(); 
-                        return await request.Content.ReadAsAsync<Car>();
+                        return await request.Content.ReadAsAsync<ClassificationCar>();
                     }
                     finally
                     {
                         ParkingClientReset();
                     }
                 }
-
-
-
             }
             finally
             {

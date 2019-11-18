@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Parking.API.Context;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace Classification.Services
 
                     lablelsDict.Add(label, car.Folder);
 
-                    if(!System.IO.Directory.Exists(car.Folder))
+                    if (!System.IO.Directory.Exists(car.Folder))
                     {
 
                     }
@@ -57,7 +58,7 @@ namespace Classification.Services
 
                 return lablelsDict;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -68,7 +69,7 @@ namespace Classification.Services
         /// </summary>
         /// <param name="image">Diretório da imagem</param>
         /// <returns></returns>
-        public async Task<Car> ClassificateAsync(string image) // TODO: mudar envio para imagem em base 64
+        public async Task<ClassificationCar> ClassificateAsync(string image) // TODO: mudar envio para imagem em base 64
         {
             try
             {
@@ -79,10 +80,6 @@ namespace Classification.Services
                 var response = await request
                     .PostJsonAsync(image)
                     .ReceiveString();
-                    //.PostMultipartAsync(mp => mp
-                    //    .AddFile("FilePath", imageDirectory));
-
-                //var result = JsonConvert.DeserializeObject<string>(await response.Content.ReadAsStringAsync());
 
                 string[] separator = { "__" };
                 var names = response.Split(separator, StringSplitOptions.RemoveEmptyEntries);
@@ -91,21 +88,30 @@ namespace Classification.Services
                 var modelName = names[1].ToUpper();
                 var year = names[2];
                 var type = names[3].ToUpper();
+                var acc = Decimal.Parse(names[4].Replace(".", ","), new CultureInfo("pt-BR"));
 
-                var car = db.Cars.FirstOrDefault(x =>
-                x.Model.Manufacturer.Name.ToUpper().Equals(manufacturerName) &&
-                x.Model.Name.ToUpper().Equals(modelName) &&
-                x.Model.Year.ToString().Equals(year) &&
-                x.Type.Name.Equals(type));
+                var car = db.Cars
+                    .Include(x => x.Type)
+                    .Include(x => x.Model)
+                        .ThenInclude(x => x.Manufacturer)
+                    .FirstOrDefault(x =>
+                        x.Model.Manufacturer.Name.ToUpper().Equals(manufacturerName) &&
+                        x.Model.Name.ToUpper().Equals(modelName) &&
+                        x.Model.Year.ToString().Equals(year) &&
+                        x.Type.Name.Equals(type));
 
                 if (car == null)
                 {
                     throw new Exception("Veículo não encontrado na base de dados do sistema.");
                 }
 
-                return car;
+                return new ClassificationCar
+                {
+                    Car = car,
+                    Accuracy = decimal.Round(acc * 100, 2, MidpointRounding.AwayFromZero)
+                };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
