@@ -67,12 +67,13 @@ namespace Classification.Services
         /// <summary>
         /// Classifica uma imagem em um dos carros conhecidos
         /// </summary>
-        /// <param name="image">Diretório da imagem</param>
+        /// <param name="image">Imagem em base 64</param>
         /// <returns></returns>
-        public async Task<ClassificationCar> ClassificateAsync(string image) // TODO: mudar envio para imagem em base 64
+        public async Task<ClassificationCar> ClassificateAsync(string image) 
         {
             try
             {
+                // Envia a requisição para API da rede neural convolucional
                 var request = "http://127.0.0.1:5000"
                     .AppendPathSegment("api/classify")
                     .WithTimeout(TimeSpan.FromSeconds(5));
@@ -84,12 +85,14 @@ namespace Classification.Services
                 string[] separator = { "__" };
                 var names = response.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
+                // Converte os dados obtidos
                 var manufacturerName = names[0].ToUpper();
                 var modelName = names[1].ToUpper();
                 var year = names[2];
                 var type = names[3].ToUpper();
                 var acc = Decimal.Parse(names[4].Replace(".", ","), new CultureInfo("pt-BR"));
 
+                // Busca pelo respectivo carro no banco de dados
                 var car = db.Cars
                     .Include(x => x.Type)
                     .Include(x => x.Model)
@@ -99,11 +102,6 @@ namespace Classification.Services
                         x.Model.Name.ToUpper().Equals(modelName) &&
                         x.Model.Year.ToString().Equals(year) &&
                         x.Type.Name.Equals(type));
-
-                if (car == null)
-                {
-                    throw new Exception("Veículo não encontrado na base de dados do sistema.");
-                }
 
                 return new ClassificationCar
                 {

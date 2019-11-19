@@ -29,7 +29,10 @@ namespace Parking.API.Controller
         }
 
 
-        //retorna todos os carros registrados
+        /// <summary>
+        /// Retorna todos os carros cadastrados no banco
+        /// </summary>
+        /// <returns></returns>
         [Route("GetCars/")]
         [HttpGet]
         public List<Car> GetAllCar()
@@ -41,7 +44,10 @@ namespace Parking.API.Controller
             return cars;
         }
 
-
+        /// <summary>
+        /// Retorna o diretório das imagens de treinamento
+        /// </summary>
+        /// <returns></returns>
         [Route("GetAdress/")]
         [HttpGet]
         public async Task<List<string>> GetAddressFolder()
@@ -49,7 +55,11 @@ namespace Parking.API.Controller
             return await service.AddressFolderAsync();
         }
 
-        //retorna o carro, sendo passado o id como parametro 
+        /// <summary>
+        /// Retorna o carro de acordo com o id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [Route("GetCarById/")]
         [HttpGet]
         public Car GetCarById([FromQuery]string id)

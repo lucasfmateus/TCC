@@ -81,11 +81,6 @@ namespace Parking.API.Context
                         directory = projectDirectory + @"/shrd/Core/Dataset/Train/" + directory;
                         directory = directory.Replace(@"\", "/");
 
-                        if (!Directory.Exists(directory))
-                        {
-
-                        }
-
                         string[] separator = { "__" };
 
                         var names = label.Split(separator, StringSplitOptions.RemoveEmptyEntries);

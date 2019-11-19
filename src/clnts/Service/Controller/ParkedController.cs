@@ -31,15 +31,12 @@ namespace UI.Service.Controller
             var myContent = JsonConvert.SerializeObject(car);
 
             using (var stringContent = new StringContent(myContent, System.Text.Encoding.UTF8, "application/json"))
-
             using (client)
             {
                 try
                 {
                     var request = await client.PostAsync("parked/NewParked", stringContent);
-                    var result = await request.Content.ReadAsStringAsync();
                     return await request.Content.ReadAsAsync<Slot>();
-
                 }
                 catch (Exception ex)
                 {
