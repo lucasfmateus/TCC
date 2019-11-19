@@ -25,7 +25,7 @@ namespace Parking.API.Controller
             db.InitializeDatabase();
         } 
 
-        [Route("GetBusySlots/")]
+        [Route("GetBusySlots")]
         [HttpGet]
         public List<ParkedCar> GetBusySlots()
         {
@@ -52,7 +52,7 @@ namespace Parking.API.Controller
 
         [Route("NewParked")]
         [HttpPost]
-        public async Task<Slot> AsyncNewCarParked([FromBody] Car car)
+        public async Task<SlotDTO> AsyncNewCarParked([FromBody] Car car)
         {
             return await service.AllocateCar(car);
         }

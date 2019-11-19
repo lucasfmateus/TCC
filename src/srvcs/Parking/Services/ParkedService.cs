@@ -18,7 +18,7 @@ namespace Parking.API.Services
             this.db = db;
         }
 
-        public async Task<Slot> AllocateCar(Car car)
+        public async Task<SlotDTO> AllocateCar(Car car)
         {
             try
             {
@@ -67,7 +67,9 @@ namespace Parking.API.Services
 
                 await db.SaveChangesAsync();
 
-                return slot;
+                var slotResult = new SlotDTO(slot);
+
+                return slotResult;
 
             }
             catch (Exception ex)

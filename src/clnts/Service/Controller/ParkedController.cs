@@ -24,9 +24,13 @@ namespace UI.Service.Controller
             {
                 return null;
             }
+            finally
+            {
+                ParkingClientReset();
+            }
         }
 
-        public async Task<Slot> NewParkedAsync(Car car)
+        public async Task<SlotDTO> NewParkedAsync(Car car)
         {
             var myContent = JsonConvert.SerializeObject(car);
 
@@ -36,11 +40,17 @@ namespace UI.Service.Controller
                 try
                 {
                     var request = await client.PostAsync("parked/NewParked", stringContent);
-                    return await request.Content.ReadAsAsync<Slot>();
+                    var result = await request.Content.ReadAsStringAsync();
+                    return await request.Content.ReadAsAsync<SlotDTO>();
+
                 }
                 catch (Exception ex)
                 {
                     return null;
+                }
+                finally
+                {
+                    ParkingClientReset();
                 }
             }
 

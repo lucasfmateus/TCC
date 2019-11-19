@@ -77,12 +77,15 @@ namespace Parking.API.Controller
 
         [Route("GetSlotById/")]
         [HttpGet]
-        public Slot GetSlotById([FromQuery]string id)
+        public SlotDTO GetSlotById([FromQuery]string id)
         {
             var slot = db.Slots.Include(x => x.Types)
                             .Where(x => x.Id == id)
                             .FirstOrDefault();
-            return slot;
+
+            var slotMap = new SlotDTO(slot);
+
+            return slotMap;
         }
 
         [Route("NewSlot")]
