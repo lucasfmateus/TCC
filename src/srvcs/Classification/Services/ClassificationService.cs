@@ -43,11 +43,6 @@ namespace Classification.Services
                     var label = $"{car.Model.Manufacturer.Name}__{car.Model.Name}__{car.Model.Year}__{car.Type.Name}";
 
                     lablelsDict.Add(label, car.Folder);
-
-                    if (!System.IO.Directory.Exists(car.Folder))
-                    {
-
-                    }
                 }
 
                 var request = "http://127.0.0.1:5000/"
